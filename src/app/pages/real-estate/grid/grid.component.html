@@ -17,19 +17,31 @@
                         <p class="text-muted fw-medium text-uppercase mb-3">Location</p>
                         <select class="form-select" id="select-location" (click)="location()">
                             <option value="" selected>Select Location</option>
-                            <option value="Australia">Australia</option>
-                            <option value="Belgium">Belgium</option>
-                            <option value="Brazil">Brazil</option>
-                            <option value="China">China</option>
-                            <option value="Denmark">Denmark</option>
-                            <option value="Greenland">Greenland</option>
-                            <option value="Jersey">Jersey</option>
-                            <option value="Mexico">Mexico</option>
-                            <option value="Saudi Arabia">Saudi Arabia</option>
-                            <option value="Serbia">Serbia</option>
-                            <option value="United Kingdom">United Kingdom</option>
-                            <option value="United States">United States</option>
-                        </select>
+                                <option value="Tunis">Tunis</option>
+                                <option value="Ariana">Ariana</option>
+                                <option value="Ben Arous">Ben Arous</option>
+                                <option value="Manouba">Manouba</option>
+                                <option value="Nabeul">Nabeul</option>
+                                <option value="Zaghouan">Zaghouan</option>
+                                <option value="Bizerte">Bizerte</option>
+                                <option value="Beja">Beja</option>
+                                <option value="Jendouba">Jendouba</option>
+                                <option value="Kef">Kef</option>
+                                <option value="Siliana">Siliana</option>
+                                <option value="Kairouan">Kairouan</option>
+                                <option value="Kasserine">Kasserine</option>
+                                <option value="Sidi Bouzid">Sidi Bouzid</option>
+                                <option value="Sousse">Sousse</option>
+                                <option value="Monastir">Monastir</option>
+                                <option value="Mahdia">Mahdia</option>
+                                <option value="Sfax">Sfax</option>
+                                <option value="Gabes">Gabes</option>
+                                <option value="Mednine">Mednine</option>
+                                <option value="Tataouine">Tataouine</option>
+                                <option value="Gafsa">Gafsa</option>
+                                <option value="Tozeur">Tozeur</option>
+                                <option value="Kebili">Kebili</option>
+                              </select>     
                     </div>
                     <div class="mb-3">
                         <p class="text-muted fw-medium text-uppercase mb-3">Property Type</p>
@@ -227,10 +239,10 @@
             <div class="card-body">
                 <div class="row align-items-center gy-3">
                     <div class="col-3">
-                        <h6 class="card-title mb-0">Property <span class="badge bg-secondary-subtle text-secondary align-baseline ms-1">241</span></h6>
+                        <h6 class="card-title mb-0">Property <span class="badge bg-secondary-subtle text-secondary align-baseline ms-1"></span></h6>
                     </div><!--end col-->
                     <div class="col-auto ms-auto">
-                        <button class="btn btn-secondary me-1" (click)="addProperty.show()"><i class="bi bi-house align-baseline me-1"></i> Add Property</button>
+                        <button class="btn btn-secondary me-1" (click)="addPropertyModal.show()"><i class="bi bi-house align-baseline me-1"></i> Add Property</button>
                         <button class="btn btn-primary myButton" (click)="showFilter()"><i class="bi bi-funnel align-baseline me-1"></i> Filter</button>
                     </div><!--end col-->
                 </div><!--end row-->
@@ -238,50 +250,50 @@
         </div>
 
         <div class="row" id="property-list">
-            @for (data of products; track $index) {
+            @for (property of properties; track $index) {
             <div class="col-xxl-3 col-lg-4 col-md-6">
                 <div class="card real-estate-grid-widgets card-animate">
                     <div class="card-body p-2">
-                        <img src="{{data.img}}" alt="img-01.jpg" class="rounded w-100 object-fit-cover" style="height: 180px">
-                        <button type="button" class="btn btn-subtle-warning custom-toggle btn-icon btn-sm" [ngClass]="data.starred == true?'active':''" (click)="starredproduct($index,$event,data.starred)">
+                        <img src="http://localhost:1919/user/image/{{property.image}}" alt="img-01.jpg" class="rounded w-100 object-fit-cover" style="height: 180px">
+                        <button type="button" class="btn btn-subtle-warning custom-toggle btn-icon btn-sm" [ngClass]="property.starred == true?'active':''" (click)="starredproduct($index,$event,property.starred)">
                             <span class="icon-on"><i class="bi bi-star"></i></span> <span class="icon-off"><i class="bi bi-star-fill"></i></span>
                         </button>
                         <div dropdown class="dropdown dropdown-real-estate">
                             <button dropdownToggle class="btn btn-light btn-icon btn-sm" type="button"> <i class="bi bi-three-dots-vertical"></i> </button>
                             <ul *bsDropdownMenu class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item edit-list" href="javascript:void(0);" (click)="editList($index)"><i class="bi bi-pencil-square me-1 align-baseline"></i>
+                                <li><a class="dropdown-item edit-list" href="javascript:void(0);" (click)="editProperty(property.id)"><i class="bi bi-pencil-square me-1 align-baseline"></i>
                                         Edit</a></li>
-                                <li><a class="dropdown-item remove-list" href="javascript:void(0);" (click)="removeItem(data.id)"><i class="bi bi-trash3 me-1 align-baseline"></i>
+                                <li><a class="dropdown-item remove-list" href="javascript:void(0);" (click)="removeItem(property.id)"><i class="bi bi-trash3 me-1 align-baseline"></i>
                                         Delete</a></li>
                             </ul>
                         </div>
                     </div>
                     <div class="card-body p-3">
                         <p class="text-muted float-end mb-0"><i class="bi bi-star text-warning align-baseline me-1"></i>
-                            {{data.rating}}</p>
-                            <span class="badge bg-{{data.color}}-subtle text-{{data.color}} fs-xxs mb-3">
-                                <i class="bi bi-house-door align-baseline me-1"></i>{{data.type}}
+                            {{property.rating}}</p>
+                            <span class="badge bg-{{property.color}}-subtle text-{{property.color}} fs-xxs mb-3">
+                                <i class="bi bi-house-door align-baseline me-1"></i>{{property.type}}
                             </span>
                             <a routerLink="/real-estate/property-overview">
-                            <h6 class="fs-lg text-capitalize text-truncate">{{data.title}}</h6>
+                            <h6 class="fs-lg text-capitalize text-truncate">{{property.title}}</h6>
                         </a>
-                        <p class="text-muted"><i class="bi bi-geo-alt align-baseline me-1"></i> {{data.location}}</p>
+                        <p class="text-muted"><i class="bi bi-geo-alt align-baseline me-1"></i> {{property.location}}</p>
                         <ul class="d-flex align-items-center gap-2 flex-wrap list-unstyled">
                             <li>
                                 <p class="text-muted mb-0"><i class="bi bi-house align-baseline text-primary me-1"></i>
-                                    {{data.bedroom}} Bedroom</p>
+                                    {{property.bedroom}} Bedroom</p>
                             </li>
                             <li>
                                 <p class="text-muted mb-0"><i class="ph ph-bathtub align-middle text-primary me-1"></i>
-                                    {{data.bathroom}} Bathroom</p>
+                                    {{property.bathroom}} Bathroom</p>
                             </li>
                             <li>
-                                <p class="text-muted mb-0"><i class="bi bi-columns align-baseline text-primary me-1"></i> {{data.area}} sqft
+                                <p class="text-muted mb-0"><i class="bi bi-columns align-baseline text-primary me-1"></i> {{property.area}} sqft
                                 </p>
                             </li>
                         </ul>
                         <div class="border-top border-dashed mt-3 pt-3 d-flex align-items-center justify-content-between gap-3">
-                            <h5 class="mb-0">${{data.price}}</h5> <a routerLink="/real-estate/property-overview" class="link-effect">Read More <i class="bi bi-chevron-right align-baseline ms-1"></i></a>
+                            <h5 class="mb-0">${{property.price}}</h5> <a routerLink="/real-estate/property-overview" class="link-effect">Read More <i class="bi bi-chevron-right align-baseline ms-1"></i></a>
                         </div>
                     </div>
                 </div>
@@ -298,11 +310,11 @@
         <div class="row align-items-center mb-4 justify-content-between text-center text-sm-start" id="pagination-element">
             <div class="col-sm">
                 <div class="text-muted">
-                    Showing <span class="fw-semibold">{{products?.length}}</span> of <span class="fw-semibold">{{productslist?.length}}</span> Results
+                    Showing <span class="fw-semibold">{{properties?.length}}</span> of <span class="fw-semibold">{{propertiesList?.length}}</span> Results
                 </div>
             </div>
             <div class="col-sm-auto  mt-3 mt-sm-0" id="pagination-element">
-                <pagination class="pagination-block pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0" [totalItems]="productslist?.length" [itemsPerPage]="8" (pageChanged)="pageChanged($event)">
+                <pagination class="pagination-block pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0" [totalItems]="propertiesList?.length" [itemsPerPage]="8" (pageChanged)="pageChanged($event)">
                 </pagination>
             </div>
         </div>
@@ -320,203 +332,6 @@
     </div>
 </div>
 
-<!-- Modal -->
-<div bsModal #addProperty="bs-modal" class="modal fade" id="addProperty">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addPropertyModalLabel">Add Property list</h5>
-        <button type="button" class="btn-close" (click)="addProperty.hide()"></button>
-      </div>
-
-      <form (ngSubmit)="saveProperty()" [formGroup]="propertyForm" class="tablelist-form" novalidate autocomplete="off">
-  <div class="modal-body">
-    <div id="alert-error-msg" class="d-none alert alert-danger py-2"></div>
-    <input type="hidden" id="id-field">
-
-    <!-- Property Images -->
-    <div class="mb-3">
-      <label class="form-label">Property Images<span class="text-danger">*</span></label>
-      <dropzone class="dropzone" [config]="dropzoneConfig" [message]="'Drop files here or click to upload.'" (success)="onUploadSuccess($event)"></dropzone>
-      <ul class="list-unstyled mb-0" id="dropzone-preview">
-        <li *ngFor="let file of propertyForm.get('images')?.value || []; let i = index" class="mt-2" id="dropzone-preview-list">
-          <div class="border rounded">
-            <div class="d-flex flex-wrap gap-2 p-2">
-              <div class="flex-shrink-0 me-3">
-                <div class="avatar-sm bg-light rounded p-2">
-                  <img class="img-fluid rounded d-block" [src]="file.dataURL || file" alt="Dropzone-Image" />
-                </div>
-              </div>
-              <div class="flex-grow-1">
-                <div class="pt-1">
-                  <h5 class="fs-md mb-1">{{ file.name }}</h5>
-                  <p class="fs-sm text-muted mb-0">{{ file.size }} bytes</p>
-                </div>
-              </div>
-              <div class="flex-shrink-0 ms-3">
-                <button (click)="removeFile(file)" class="btn btn-sm btn-danger">Delete</button>
-              </div>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </div>
-
-    <!-- Property Title -->
-    <div class="mb-3">
-      <label for="property-title-input" class="form-label">Property title<span class="text-danger">*</span></label>
-      <input type="text" id="property-title-input" formControlName="title" class="form-control" placeholder="Enter Property title" required>
-    </div>
-
-    <!-- Property Type -->
-    <div class="mb-3">
-      <label for="property-type-input" class="form-label">Property Type<span class="text-danger">*</span></label>
-      <select class="form-select" id="property-type-input" formControlName="type" >
-        <option value="">Select Property Type</option>
-        <option value="Villa">Villa</option>
-        <option value="Residency">Residency</option>
-        <option value="Apartment">Apartment</option>
-        <option value="Others">Other</option>
-      </select>
-    </div>
-
-    <div class="row">
-      <div class="col-lg-4">
-        <div class="mb-3">
-          <label for="bedroom-input" class="form-label">Bedroom<span class="text-danger">*</span></label>
-          <input type="number" id="bedroom-input" class="form-control" formControlName="bedroom" placeholder="Enter Bedroom" required>
-        </div>
-      </div>
-
-      <div class="col-lg-4">
-        <div class="mb-3">
-          <label for="bathroom-input" class="form-label">Bathroom<span class="text-danger">*</span></label>
-          <input type="number" class="form-control" id="bathroom-input" formControlName="bathroom" placeholder="Enter Bathroom" required>
-        </div>
-      </div>
-
-      <div class="col-lg-4">
-        <div class="mb-3">
-          <label for="sqft-input" class="form-label">SQFT<span class="text-danger">*</span></label>
-          <input type="number" class="form-control" id="sqft-input" placeholder="Enter sqft" formControlName="area" required>
-        </div>
-      </div>
-
-      <div class="col-lg-4">
-        <div class="mb-3">
-          <label for="property-price-input" class="form-label">Price<span class="text-danger">*</span></label>
-          <div class="input-group">
-            <span class="input-group-text">$</span>
-            <input type="number" class="form-control" id="property-price-input" formControlName="price" placeholder="Enter price" required>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-4">
-        <div class="mb-3">
-          <label for="agent-name-input" class="form-label">Agent Name<span class="text-danger">*</span></label>
-          <input type="text" class="form-control" id="agent-name-input" formControlName="agent" placeholder="Enter Agent Name" required>
-        </div>
-      </div>
-
-      <div class="col-lg-4">
-        <div class="mb-3">
-          <label for="requirement-input" class="form-label">Requirement<span class="text-danger">*</span></label>
-          <select class="form-select" id="requirement-input" formControlName="requirement">
-            <option value="">Requirement Type</option>
-            <option value="Sale">Sale</option>
-            <option value="Rent">Rent</option>
-          </select>
-        </div>
-      </div>
-
-
-      <div class="col-lg-12">
-        <div class="mb-3">
-          <label for="addressLine-input" class="form-label">Sort Address<span class="text-danger">*</span></label>
-          <textarea class="form-control" id="addressLine-input" rows="3" formControlName="location" placeholder="Enter sort address" required></textarea>
-        </div>
-      </div>
-    </div>
-
-    <!-- Additional Features Section -->
-    <div class="row">
-        <div class="col-lg-12">
-          <h5 class="mt-4">Additional Features</h5>
-        </div>
-     
-       <div class="col-lg-4">
-            <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="swimmingPool" (change)="onFeatureChange('swimmingPool', $event)">
-            <label class="form-check-label" for="swimmingPool">Swimming Pool</label>
-            </div>
-        </div>
-        
-        <div class="col-lg-4">
-            <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="airConditioning" (change)="onFeatureChange('airConditioning', $event)">
-            <label class="form-check-label" for="airConditioning">Air Conditioning</label>
-            </div>
-        </div>
-        
-        <div class="col-lg-4">
-            <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="electricity" (change)="onFeatureChange('electricity', $event)">
-            <label class="form-check-label" for="electricity">Electricity</label>
-            </div>
-        </div>
-        
-        <div class="col-lg-4">
-            <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="nearGreenZone" (change)="onFeatureChange('nearGreenZone', $event)">
-            <label class="form-check-label" for="nearGreenZone">Near Green Zone</label>
-            </div>
-        </div>
-        
-        <div class="col-lg-4">
-            <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="nearShop" (change)="onFeatureChange('nearShop', $event)">
-            <label class="form-check-label" for="nearShop">Near Shop</label>
-            </div>
-        </div>
-        
-        <div class="col-lg-4">
-            <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="nearSchool" (change)="onFeatureChange('nearSchool', $event)">
-            <label class="form-check-label" for="nearSchool">Near School</label>
-            </div>
-        </div>
-        
-        <div class="col-lg-4">
-            <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="parkingAvailable" (change)="onFeatureChange('parkingAvailable', $event)">
-            <label class="form-check-label" for="parkingAvailable">Parking Available</label>
-            </div>
-        </div>
-        
-        <div class="col-lg-4">
-            <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="internet" (change)="onFeatureChange('internet', $event)">
-            <label class="form-check-label" for="internet">Internet</label>
-            </div>
-        </div>
-        
-        <div class="col-lg-4">
-            <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="balcony" (change)="onFeatureChange('balcony', $event)">
-            <label class="form-check-label" for="balcony">Balcony</label>
-            </div>
-        </div>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Save Property</button>
-  </div>
-</form>
-
-
-    </div>
-  </div>
-</div>
 
 
 <!-- deleteRecordModal -->
@@ -545,3 +360,263 @@
         </div>
     </div>
 </div>
+
+
+
+<div bsModal #addPropertyModal="bs-modal" class="modal fade" id="addPropertyModal">
+    <div class="modal-dialog">
+        <div class="modal-content border-0">
+            <div class="modal-header bg-secondary p-3">
+                <h5 class="modal-title text-white" id="addCategoryLabel">Add Property</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="savePropertyModalHide()"></button>
+            </div>
+
+            <form (ngSubmit)="saveProperty()" [formGroup]="propertyForm" class="tablelist-form" novalidate autocomplete="off">
+                <div class="modal-body">
+                    <div id="alert-error-msg" class="d-none alert alert-danger py-2"></div>
+                    <input type="hidden" id="id-field">
+                    <div>
+                        <div class="mb-3">
+                            <label class="form-label">property Logo <span class="text-danger">*</span></label>
+                        
+                            <input type="file" id="logo" class="form-control" formControlName="image" (change)="onUploadSuccess($event)" />
+                            <div *ngIf="propertyForm.get('image')?.hasError('required') && propertyForm.get('image')?.touched" class="text-danger">
+                                property image is required.
+                            </div>
+                          
+                        </div>
+
+                        <!-- Property Title -->
+                            <div class="mb-3">
+                            <label for="property-title-input" class="form-label">Property title<span class="text-danger">*</span></label>
+                            <input type="text" id="property-title-input" formControlName="title" class="form-control" placeholder="Enter Property title" required>
+                            </div>
+
+                            <!-- Property Type -->
+                            <div class="mb-3">
+                            <label for="property-type-input" class="form-label">Property Type<span class="text-danger">*</span></label>
+                            <select class="form-select" id="property-type-input" formControlName="type" >
+                                <option value="">Select Property Type</option>
+                                <option value="Villa">Villa</option>
+                                <option value="Residency">Residency</option>
+                                <option value="Apartment">Apartment</option>
+                                <option value="Others">Other</option>
+                            </select>
+                            </div>
+
+                            <div class="row">
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                <label for="bedroom-input" class="form-label">Bedroom<span class="text-danger">*</span></label>
+                                <input type="number" id="bedroom-input" class="form-control" formControlName="bedroom" placeholder="Enter Bedroom" required>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                <label for="bathroom-input" class="form-label">Bathroom<span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="bathroom-input" formControlName="bathroom" placeholder="Enter Bathroom" required>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                <label for="sqft-input" class="form-label">SQFT<span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="sqft-input" placeholder="Enter sqft" formControlName="area" required>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                <label for="property-price-input" class="form-label">Price<span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">DT</span>
+                                    <input type="number" class="form-control" id="property-price-input" formControlName="price" placeholder="Enter price" required>
+                                </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                <label for="requirement-input" class="form-label">Requirement<span class="text-danger">*</span></label>
+                                <select class="form-select" id="requirement-input" formControlName="requirement">
+                                    <option value="">Requirement Type</option>
+                                    <option value="Sale">Sale</option>
+                                    <option value="Rent">Rent</option>
+                                </select>
+                                </div>
+                            </div>
+
+
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                <label for="addressLine-input" class="form-label">Sort Address<span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="addressLine-input" rows="3" formControlName="location" placeholder="Enter sort address" required></textarea>
+                                </div>
+                            </div>
+                            </div>
+
+                            <!-- Additional Features Section -->
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h5 class="mt-4">Additional Features</h5>
+                                </div>
+
+                                <div class="col-lg-4" *ngFor="let feature of features">
+                                    <div class="mb-3 form-check">
+                                        <input 
+                                            type="checkbox" 
+                                            class="form-check-input" 
+                                            id="{{ feature.id }}" 
+                                            [checked]="feature.selected" 
+                                            (change)="onFeatureChange(feature.id, $event)"
+                                        >
+                                        <label class="form-check-label" for="{{ feature.id }}">{{ feature.label }}</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="hstack gap-2 justify-content-end">
+                        <button type="button" class="btn btn-ghost-danger" (click)="savePropertyModalHide()"><i class="bi bi-x-lg align-baseline me-1"></i> Close</button>
+                        <button type="submit" class="btn btn-primary" id="add-btn">Add Property</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- modal-content -->
+    </div>
+</div><!--end add Property modal-->
+
+
+<div bsModal #editPropertyModal="bs-modal" class="modal fade" id="editPropertyModal">
+    <div class="modal-dialog">
+        <div class="modal-content border-0">
+            <div class="modal-header bg-secondary p-3">
+                <h5 class="modal-title text-white" id="addCategoryLabel">Add Property</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="editPropertyModalHide()"></button>
+            </div>
+
+            <form (ngSubmit)="updateProperty()" [formGroup]="propertyFormEdit" class="tablelist-form" novalidate autocomplete="off">
+                <div class="modal-body">
+                    <div id="alert-error-msg" class="d-none alert alert-danger py-2"></div>
+                    <input type="hidden" id="id-field">
+                    <div>
+                        <div class="mb-3">
+                            <label class="form-label">property Logo <span class="text-danger">*</span></label>
+                            <img *ngIf="logoUrl" [src]="logoUrl" alt="Actif Logo" class="avatar-lg mb-2">
+
+                            <input type="file" id="logo" class="form-control" formControlName="image" (change)="onUploadSuccess($event)" />
+                            <div *ngIf="propertyFormEdit.get('image')?.hasError('required') && propertyFormEdit.get('image')?.touched" class="text-danger">
+                                property image is required.
+                            </div>
+                          
+                        </div>
+
+                        <!-- Property Title -->
+                            <div class="mb-3">
+                            <label for="property-title-input" class="form-label">Property title<span class="text-danger">*</span></label>
+                            <input type="text" id="property-title-input" formControlName="title" class="form-control" placeholder="Enter Property title" required>
+                            </div>
+
+                            <!-- Property Type -->
+                            <div class="mb-3">
+                            <label for="property-type-input" class="form-label">Property Type<span class="text-danger">*</span></label>
+                            <select class="form-select" id="property-type-input" formControlName="type" >
+                                <option value="">Select Property Type</option>
+                                <option value="Villa">Villa</option>
+                                <option value="Residency">Residency</option>
+                                <option value="Apartment">Apartment</option>
+                                <option value="Others">Other</option>
+                            </select>
+                            </div>
+
+                            <div class="row">
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                <label for="bedroom-input" class="form-label">Bedroom<span class="text-danger">*</span></label>
+                                <input type="number" id="bedroom-input" class="form-control" formControlName="bedroom" placeholder="Enter Bedroom" required>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                <label for="bathroom-input" class="form-label">Bathroom<span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="bathroom-input" formControlName="bathroom" placeholder="Enter Bathroom" required>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                <label for="sqft-input" class="form-label">SQFT<span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="sqft-input" placeholder="Enter sqft" formControlName="area" required>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                <label for="property-price-input" class="form-label">Price<span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">DT</span>
+                                    <input type="number" class="form-control" id="property-price-input" formControlName="price" placeholder="Enter price" required>
+                                </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                <label for="requirement-input" class="form-label">Requirement<span class="text-danger">*</span></label>
+                                <select class="form-select" id="requirement-input" formControlName="requirement">
+                                    <option value="">Requirement Type</option>
+                                    <option value="Sale">Sale</option>
+                                    <option value="Rent">Rent</option>
+                                </select>
+                                </div>
+                            </div>
+
+
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                <label for="addressLine-input" class="form-label">Sort Address<span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="addressLine-input" rows="3" formControlName="location" placeholder="Enter sort address" required></textarea>
+                                </div>
+                            </div>
+                            </div>
+
+                            <!-- Additional Features Section -->
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <h5 class="mt-4">Additional Features</h5>
+                                </div>
+
+                                <div class="col-lg-4" *ngFor="let feature of features">
+                                    <div class="mb-3 form-check">
+                                        <input 
+                                            type="checkbox" 
+                                            class="form-check-input" 
+                                            id="{{ feature.id }}" 
+                                            [checked]="feature.selected" 
+                                            (change)="onFeatureChange(feature.id, $event)"
+                                        >
+                                        <label class="form-check-label" for="{{ feature.id }}">{{ feature.label }}</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="hstack gap-2 justify-content-end">
+                        <button type="button" class="btn btn-ghost-danger" (click)="editPropertyModalHide()"><i class="bi bi-x-lg align-baseline me-1"></i> Close</button>
+                        <button type="submit" class="btn btn-primary" id="add-btn">Update Property</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- modal-content -->
+    </div>
+</div><!--end add Property modal-->

@@ -1,18 +1,14 @@
 import { Component, ViewChild } from '@angular/core';
-// import { EstateGridService } from './grid.service';
 import { DecimalPipe } from '@angular/common';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
-
-// import { estateList } from './data';
+import { ToastrService } from 'ngx-toastr'; 
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { Options } from '@angular-slider/ngx-slider';
-import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
-import { Store } from '@ngrx/store';
-import { addlistingGridData, deletelistingGridData, fetchlistingGridData, updatelistingGridData } from 'src/app/store/App-realestate/apprealestate.action';
-import { selectData } from 'src/app/store/App-realestate/apprealestate-selector';
+
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { RealestateService } from 'src/app/core/services/realestate.service';
+import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
 
 @Component({
   selector: 'app-grid',
@@ -24,20 +20,18 @@ import { RealestateService } from 'src/app/core/services/realestate.service';
 // Grid Component
 export class GridComponent {
   files: File[] = [];
-  page: number = 1
-  selectedPropertyType: string = "Villa"
-  // bread crumb items
+  page: number = 1;
+  selectedPropertyType: string = "Villa";
   breadCrumbItems!: Array<{}>;
-  productslist: any
- 
   submitted = false;
-  products: any;
-  endItem: any
-  // price: any = [500, 3800];
-
+  endItem: any;
+  fileLogo: File | null = null;
+  editpropertyId: any;
+  addPropertyError: string | null = null;
+  logoUrl: any;
   bedroom: any;
-
-  // Price Slider
+  properties: any;
+  propertiesList: any;
   pricevalue: number = 100;
   minValue = 500;
   maxValue = 3800;
@@ -50,49 +44,35 @@ export class GridComponent {
   };
 
   propertyForm!: UntypedFormGroup;
-  selectedFile: File | null = null;
-  additionalFeatures = {
-    swimmingPool: false,
-    airConditioning: false,
-    electricity: false,
-    nearGreenZone: false,
-    nearShop: false,
-    nearSchool: false,
-    parkingAvailable: false,
-    internet: false,
-    balcony: false
-  };
-
-  
-  @ViewChild('addProperty', { static: false }) addProperty?: ModalDirective;
+  propertyFormEdit!: UntypedFormGroup;
+  additionalFeatures: string[] = [];
+  @ViewChild('addPropertyModal', { static: false }) addPropertyModal?: ModalDirective;
+  @ViewChild('editPropertyModal', { static: false }) editPropertyModal?: ModalDirective;
   @ViewChild('deleteRecordModal', { static: false }) deleteRecordModal?: ModalDirective;
   deleteID: any;
-  editData: any;
-
-  constructor(private formBuilder: UntypedFormBuilder,private propertyService:RealestateService, public store: Store) {
-  }
+  constructor(
+    private formBuilder: UntypedFormBuilder,
+    private propertyService: RealestateService,
+  
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit(): void {
-    /**
-     * BreadCrumb
-     */
+    // Breadcrumb
     this.breadCrumbItems = [
       { label: 'Real Estate', active: true },
       { label: 'Listing Grid', active: true }
     ];
+    
     setTimeout(() => {
-      this.store.dispatch(fetchlistingGridData());
-      this.store.select(selectData).subscribe((data) => {
-        this.products = data;
-        this.productslist = data;
-        this.products = this.productslist.slice(0, 8)
-      });
-      document.getElementById('elmLoader')?.classList.add('d-none')
+      this.loadProperties();
     }, 1000);
 
-    /**
-   * Form Validation
-   */
+    // Form Validation
+    this.initForms();
+  }
+
+  initForms() {
     this.propertyForm = this.formBuilder.group({
       title: ['', [Validators.required]],
       type: ['', [Validators.required]],
@@ -103,86 +83,258 @@ export class GridComponent {
       agent: ['', [Validators.required]],
       requirement: ['', [Validators.required]],
       location: ['', [Validators.required]],
-      streetAddress: ['', [Validators.required]],
-      state: ['', [Validators.required]],
-      country: ['', [Validators.required]],
-      zipcode: ['', [Validators.required]],
-      img: [null],
-     
+      image: [null],
+    });
+
+    this.propertyFormEdit = this.formBuilder.group({
+      title: ['', [Validators.required]],
+      type: ['', [Validators.required]],
+      bedroom: ['', [Validators.required]],
+      bathroom: ['', [Validators.required]],
+      area: ['', [Validators.required]],
+      price: ['', [Validators.required]],
+      agent: ['', [Validators.required]],
+      requirement: ['', [Validators.required]],
+      location: ['', [Validators.required]],
+      image: [null],
     });
   }
 
-  onFileSelected(event: any) {
-    this.selectedFile = event.target.files[0];
+  features = [
+    { id: 'swimmingPool', label: 'Swimming Pool', selected: false },
+    { id: 'airConditioning', label: 'Air Conditioning', selected: false },
+    { id: 'electricity', label: 'Electricity', selected: false },
+    { id: 'nearGreenZone', label: 'Near Green Zone', selected: false },
+    { id: 'nearShop', label: 'Near Shop', selected: false },
+    { id: 'nearSchool', label: 'Near School', selected: false },
+    { id: 'parkingAvailable', label: 'Parking Available', selected: false },
+    { id: 'internet', label: 'Internet', selected: false },
+    { id: 'balcony', label: 'Balcony', selected: false },
+  ];
+
+  onFeatureChange(featureId: string, event: Event): void {
+    const checkbox = event.target as HTMLInputElement;
+    const selectedFeature = this.features.find(feature => feature.id === featureId);
+  
+    if (selectedFeature) {
+      selectedFeature.selected = checkbox.checked;
+  
+      // Add or remove featureId based on checkbox status
+      if (checkbox.checked) {
+        this.additionalFeatures.push(featureId);
+      } else {
+        this.additionalFeatures = this.additionalFeatures.filter(id => id !== featureId);
+      }
+      console.log('Updated additionalFeatures:', this.additionalFeatures);
+    }
+  }
+ 
+
+  savePropertyModalHide() {
+    this.addPropertyModal?.hide(); 
+    this.propertyForm.reset();
+    this.fileLogo = null;
   }
 
-  onFeatureChange(feature: string, event: Event) {
-    const checkbox = event.target as HTMLInputElement;
-    this.additionalFeatures[feature as keyof typeof this.additionalFeatures] = checkbox.checked;
+  editPropertyModalHide() {
+    this.editPropertyModal?.hide();
+    this.propertyFormEdit.reset();
+    this.fileLogo = null;
+  }
+
+  loadProperties() {
+    this.propertyService.getAllProperties().subscribe((data) => {
+      this.properties = data;
+      console.log(data)
+      this.propertiesList = data;
+      this.properties = this.propertiesList.slice(0, 8);
+    });
+    document.getElementById('elmLoader')?.classList.add('d-none');
+  }
+
+
+  onUploadSuccess(event: any) {
+    setTimeout(() => {
+      this.fileLogo = event.target.files[0];
+      this.logoUrl=null
+    }, 0);
+  }
+
+
+  // Add Property
+  saveProperty() {
+    const formData = new FormData();
+    formData.append('title', this.propertyForm.get('title')?.value);
+    formData.append('type', this.propertyForm.get('type')?.value);
+    formData.append('bedroom', this.propertyForm.get('bedroom')?.value);
+    formData.append('bathroom', this.propertyForm.get('bathroom')?.value);
+    formData.append('area', this.propertyForm.get('area')?.value);
+    formData.append('price', this.propertyForm.get('price')?.value);
+    formData.append('requirement', this.propertyForm.get('requirement')?.value);
+    formData.append('location', this.propertyForm.get('location')?.value);
+    this.additionalFeatures.forEach((feature) => {
+      formData.append('additionalFeatures', feature);
+    });
+   
+    if (this.fileLogo) {
+      formData.append('image', this.fileLogo);
+    }
+    this.propertyService.saveProperty(formData).subscribe(response => {
+      console.log('Property saved', response);
+      this.toastr.success('Property added successfully!', 'Success'); 
+      this.loadProperties(); 
+      this.savePropertyModalHide();
+    }, error => {
+      this.toastr.error('Error saving property.', 'Error'); 
+      console.error('Error saving property', error);
+    });
+  }
+
+  editProperty(id: any) {
+    this.propertyService.getPropertyById(id).subscribe((property: any) => {
+      this.editpropertyId = id;
+      this.propertyFormEdit.patchValue({
+        title: property.nom,
+        type: property.type,
+        bedroom: property.bedroom,
+        bathroom: property.bathroom,
+        area: property.area,
+        price: property.price,
+        requirement: property.requirement,
+        location: property.location,
+        additionalFeatures: property.additionalFeatures
+      });
+      this.logoUrl = `http://localhost:1919/user/image/${property.image}`;
+      this.editPropertyModal?.show();
+    });
+  }
+  
+
+  updateProperty() {
+    this.submitted = true;
+    if (this.propertyFormEdit.valid) {
+      const updateData = new FormData();
+      updateData.append('title', this.propertyFormEdit.value.title); // Corrected property name from 'nom' to 'title'
+      if (this.fileLogo) {
+        updateData.append('image', this.fileLogo); // Corrected property name from 'logo' to 'image'
+      }
+      this.propertyService.updateProperty(this.editpropertyId, updateData).subscribe(
+        response => {
+          this.toastr.success('Property updated successfully!', 'Success');  
+          console.log('Property updated successfully:', response);
+          this.loadProperties();
+          this.editPropertyModalHide();
+        },
+        error => {
+          this.toastr.error('Error updating property.', 'Error'); 
+          console.error('Error updating property:', error);
+        }
+      );
+    }
   }
 
   // Hide/Show Filter
   showFilter() {
     const filterStyle = (document.getElementById("propertyFilters") as HTMLElement).style.display;
-    if (filterStyle == 'none') {
-      (document.getElementById("propertyFilters") as HTMLElement).style.display = 'block'
-    } else {
-      (document.getElementById("propertyFilters") as HTMLElement).style.display = 'none'
-    }
+    (document.getElementById("propertyFilters") as HTMLElement).style.display = filterStyle === 'none' ? 'block' : 'none';
   }
 
-  // Add to starr
-  starredproduct(id: any, event: any, star: any) {
-    event.target.classList.toggle('active')
-    if (star == false) {
-      this.products[id].starred = true
-    } else {
-      this.products[id].starred = false
-    }
+  starredProduct(id: any, event: any) {
+    event.target.classList.toggle('active');
+    this.properties[id].starred = !this.properties[id].starred; 
   }
 
-  // filter bedroom wise
   bedroomFilter(ev: any) {
-    if (ev.target.value != '') {
-      if (ev.target.checked == true) {
-        this.products = this.productslist.filter((el: any) => {
-          return el.bedroom == ev.target.value
-        })
-      }
+    if (ev.target.checked) {
+      this.properties = this.propertiesList.filter((el: any) => el.bedroom == ev.target.value);
     } else {
-      this.products = this.productslist
+      this.properties = this.propertiesList;
     }
   }
 
-  // filter of bathrom wise
   bathroomFilter(ev: any) {
-    if (ev.target.value != '') {
-      if (ev.target.checked == true) {
-        this.products = this.productslist.filter((el: any) => {
-          return el.bedroom == ev.target.value
-        })
+    if (ev.target.checked) {
+      this.properties = this.propertiesList.filter((el: any) => el.bathroom == ev.target.value); 
+    } else {
+      this.properties = this.propertiesList;
+    }
+  }
+
+  // Location-wise filter
+  filterByLocation() {
+    const location = (document.getElementById("select-location") as HTMLInputElement).value;
+    this.properties = location ? 
+      this.propertiesList.filter((data:any) => data.location === location) : 
+      this.propertiesList;
+    this.updateNoResultDisplay();
+  }
+
+  // Range Slider Wise Data Filter
+  priceRangeFilter() {
+    const min = this.minValue;
+    const max = this.maxValue;
+
+    this.properties = this.propertiesList.filter((property:any) => property.price >= min && property.price <= max);
+    this.updateNoResultDisplay();
+  }
+
+  // Pagination
+  onPageChanged(event: PageChangedEvent) {
+    this.page = event.page;
+  }
+
+  // Delete Property
+  deleteProperty(id: any) {
+    this.deleteID = id;
+    this.deleteRecordModal?.show();
+  }
+
+  confirmDelete() {
+    this.propertyService.deleteProperty(this.deleteID).subscribe(response => {
+      this.toastr.success('Property deleted successfully!', 'Success');
+      console.log('Property deleted:', response);
+      this.loadProperties();
+      this.deleteRecordModal?.hide();
+    }, error => {
+      this.toastr.error('Error deleting property.', 'Error');
+      console.error('Error deleting property:', error);
+    });
+  }
+
+
+
+  onRemove(event: File) {
+    this.fileLogo = null;
+  }
+
+  updateNoResultDisplay() {
+    if (this.properties.length === 0) {
+      document.getElementById("noResult")?.classList.remove('d-none');
+      document.getElementById("propertyGrid")?.classList.add('d-none');
+    } else {
+      document.getElementById("noResult")?.classList.add('d-none');
+      document.getElementById("propertyGrid")?.classList.remove('d-none');
+    }
+  }
+  pageChanged(event: PageChangedEvent): void {
+    const startItem = (event.page - 1) * event.itemsPerPage;
+    const endItem = event.page * event.itemsPerPage;
+    this.properties = this.propertiesList.slice(startItem, endItem);
+  }
+  removeItem(id: any) {
+    this.deleteID = id
+    this.deleteRecordModal?.show()
+  }
+
+  property() {
+    this.properties = this.propertiesList.filter((data: any) => {
+      if (this.selectedPropertyType === "") {
+        return true
+      } else {
+        return data.type === this.selectedPropertyType
       }
-    } else {
-      this.products = this.productslist
-    }
+    })
   }
-
-  // location wise filter
-  location() {
-    const location = (document.getElementById("select-location") as HTMLInputElement).value
-    if (location) {
-      this.products = this.productslist.filter((data: any) => {
-        return data.location === location
-      })
-    } else {
-      this.products = this.productslist
-    }
-    this.updateNoResultDisplay()
-  }
-
-  /**
- * Range Slider Wise Data Filter
- */
   valueChange(event: number, isMinValue: boolean) {
     if (isMinValue) {
       this.minValue = event;
@@ -191,120 +343,32 @@ export class GridComponent {
     }
 
   }
-
-  property() {
-    this.products = this.productslist.filter((data: any) => {
-      if (this.selectedPropertyType === "") {
-        return true
-      } else {
-        return data.type === this.selectedPropertyType
-      }
-    })
-  }
-
-  // Edit Data
-  editList(id: any) {
-    this.uploadedFiles = [];
-    this.addProperty?.show()
-    var modaltitle = document.querySelector('.modal-title') as HTMLAreaElement
-    modaltitle.innerHTML = 'Edit Product'
-    var modalbtn = document.getElementById('add-btn') as HTMLAreaElement
-    modalbtn.innerHTML = 'Update'
-
-    this.editData = this.products[id]
-    this.uploadedFiles.push({ 'dataURL': this.editData.img, 'name': this.editData.imgalt, 'size': 1024, });
-    this.propertyForm.patchValue(this.products[id]);
-  }
-
-  // Add Property
-  saveProperty() {
-    const formData = new FormData();
-
-    // Append form fields individually
-    formData.append('title', this.propertyForm.get('title')?.value);
-    formData.append('type', this.propertyForm.get('type')?.value);
-    formData.append('bedroom', this.propertyForm.get('bedroom')?.value);
-    formData.append('bathroom', this.propertyForm.get('bathroom')?.value);
-    formData.append('area', this.propertyForm.get('area')?.value);
-    formData.append('price', this.propertyForm.get('price')?.value);
-    formData.append('agent', this.propertyForm.get('agent')?.value);
-    formData.append('requirement', this.propertyForm.get('requirement')?.value);
-    formData.append('location', this.propertyForm.get('location')?.value);
-    
-    // Append address-related fields
-    formData.append('streetAddress', this.propertyForm.get('streetAddress')?.value);
-    formData.append('state', this.propertyForm.get('state')?.value);
-    formData.append('country', this.propertyForm.get('country')?.value);
-    formData.append('zipcode', this.propertyForm.get('zipcode')?.value);
-  
-    // Append additional features (as a JSON string)
-    formData.append('additionalFeatures', JSON.stringify(this.additionalFeatures));
-  
-    // Append the image file if selected
-    if (this.selectedFile) {
-      formData.append('img', this.selectedFile);
-    }
-  
-    // Call the property service to save the property
-    this.propertyService.saveProperty(formData).subscribe(response => {
-      console.log('Property saved', response);
-    }, error => {
-      console.error('Error saving property', error);
-    });
-  }
-  // Delete Product
-  removeItem(id: any) {
-    this.deleteID = id
-    this.deleteRecordModal?.show()
-  }
-
-  confirmDelete() {
-    this.store.dispatch(deletelistingGridData({ id: this.deleteID.toString()}));
-    this.deleteRecordModal?.hide()
-  }
-
-
-  // File Upload
-  public dropzoneConfig: DropzoneConfigInterface = {
-    clickable: true,
-    addRemoveLinks: true,
-    previewsContainer: false,
-  };
-
-  uploadedFiles: any[] = [];
-
-  // File Upload
-  imageURL: any;
-  onUploadSuccess(event: any) {
-    setTimeout(() => {
-      this.uploadedFiles.push(event[0]);
-      this.propertyForm.controls['img'].setValue(event[0].dataURL);
-    }, 0);
-  }
-
-  // File Remove
-  removeFile(event: any) {
-    this.uploadedFiles.splice(this.uploadedFiles.indexOf(event), 1);
-  }
-
-  // Page Changed
-  pageChanged(event: PageChangedEvent): void {
-    const startItem = (event.page - 1) * event.itemsPerPage;
-    const endItem = event.page * event.itemsPerPage;
-    this.products = this.productslist.slice(startItem, endItem);
-  }
-
-  // no result 
-  updateNoResultDisplay() {
-    const noResultElement = document.getElementById('noresult') as HTMLElement;
-    const paginationElement = document.getElementById('pagination-element') as HTMLElement;
-
-    if (this.products.length === 0) {
-      noResultElement.style.display = 'block';
-      paginationElement.classList.add('d-none')
+  location() {
+    const location = (document.getElementById("select-location") as HTMLInputElement).value;
+    if (location) {
+      this.properties = this.propertiesList.filter((data: any) => {
+        return data.location.toLowerCase().includes(location.toLowerCase());
+      });
     } else {
-      noResultElement.style.display = 'none';
-      paginationElement.classList.remove('d-none')
+      this.properties = this.propertiesList;
+    }
+    this.updateNoResultDisplay();
+  }
+  starredproduct(id: any, event: any, star: any) {
+    event.target.classList.toggle('active')
+    if (star == false) {
+      this.properties[id].starred = true
+    } else {
+      this.properties[id].starred = false
     }
   }
+
+    // File Upload
+    public dropzoneConfig: DropzoneConfigInterface = {
+      clickable: true,
+      addRemoveLinks: true,
+      previewsContainer: false,
+    };
+  
+
 }
