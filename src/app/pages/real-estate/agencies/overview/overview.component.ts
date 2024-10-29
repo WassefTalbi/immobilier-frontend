@@ -9,6 +9,7 @@ import { Store } from '@ngrx/store';
 import { fetchagentData } from 'src/app/store/Agent/agent.action';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { AgencyService } from 'src/app/core/services/agency.service';
 
 @Component({
   selector: 'app-overview',
@@ -31,16 +32,20 @@ export class OverviewComponent {
   deleteID: any;
   currentTab: any = 'property';
   agentlist: any;
+  agency:any
+  properties:any
   currentAgencyId:any
   constructor(
     public store: Store,
     private route: ActivatedRoute,
-    private toastr: ToastrService 
+    private toastr: ToastrService ,
+    private agencyService:AgencyService
   ) { }
   
-
+ 
   ngOnInit(): void {
-    this.getCurrentAgencyId()
+    this.getCurrentAgencyId();
+    this.loadAgency();
     /**
      * BreadCrumb
      */
@@ -68,6 +73,13 @@ export class OverviewComponent {
     this.route.paramMap.subscribe(params => {
       this.currentAgencyId = params.get('id');
       console.log("current property",this.currentAgencyId);
+    });
+  }
+  loadAgency() {
+    this.agencyService.getAgencyById(this.currentAgencyId).subscribe((data) => {
+      this.agency = data;
+      this.properties=data.properties
+      console.log('display data of agency', data);
     });
   }
   // Agent Pagination
