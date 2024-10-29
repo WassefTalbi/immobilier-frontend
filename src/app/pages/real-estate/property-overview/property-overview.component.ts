@@ -48,7 +48,6 @@ export class PropertyOverviewComponent {
   loadProperty() {
     this.realeStateService.getPropertyById(this.currentPropertyId).subscribe((data) => {
       this.property = data;
-      this.agencyOwner = data.agency;
       console.log('display data', data);
     });
   }

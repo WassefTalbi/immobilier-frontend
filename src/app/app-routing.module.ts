@@ -13,6 +13,8 @@ import { AgenceGuard } from './core/guards/agence.guardd';
 const routes: Routes = [
   { path: '', component: LayoutComponent, loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule), canActivate: [AdminGuard] },
   { path: 'User', component: LayoutComponentUser, loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule), canActivate: [userGuard]  },
+  { path: 'Agency', component: LayoutComponentUser, loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule), canActivate: [AgenceGuard]  },
+
  // { path: 'Agence', component: LayoutComponentUser, loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule), canActivate: [AgenceGuard]  },
   { path: 'auth', component: AuthlayoutComponent, loadChildren: () => import('./account/account.module').then(m => m.AccountModule) },
   { path: 'pages',component: AuthlayoutComponent, loadChildren: () => import('./extraspages/extraspages.module').then(m => m.ExtraspagesModule)/*,canActivate: [userGuard]*/},

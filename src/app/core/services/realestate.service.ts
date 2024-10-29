@@ -18,6 +18,9 @@ export class RealestateService {
   getAllProperties(): Observable<any> {
     return this.http.get(`${API_URL+PROPERTIES}all`);
   }
+  getAllPropertiesByAgency(): Observable<any> {
+    return this.http.get(`${API_URL+PROPERTIES}owner`);
+  }
 
   getPropertyById(id: number): Observable<any> {
     return this.http.get(`${API_URL+PROPERTIES}findById/${id}`);

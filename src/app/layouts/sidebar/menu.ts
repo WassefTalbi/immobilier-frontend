@@ -35,12 +35,7 @@ export const MENU: MenuItem[] = [
                     link: '/real-estate/agent/list',
                     parentId: 51
                 },
-                {
-                    id: 54,
-                    label: 'MENUITEMS.APPS.LIST.OVERVIEW',
-                    link: '/real-estate/agent/overview',
-                    parentId: 51
-                },
+            
             ]
         },
         {

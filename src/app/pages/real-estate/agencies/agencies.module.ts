@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { NgxSliderModule } from 'ngx-slider-v2';
 // Page Route
 import { AgenciesRoutingModule } from './agencies-routing.module';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -23,6 +23,12 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 // Component
 import { ListComponent } from './list/list.component';
 import { OverviewComponent } from './overview/overview.component';
+import { OwnerComponent } from './owner/owner.component';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { NgApexchartsModule } from 'ng-apexcharts';
+import { SlickCarouselModule } from 'ngx-slick-carousel';
+import { CountUpModule } from 'ngx-countup';
+import { SimplebarAngularModule } from 'simplebar-angular';
 
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   // Change this to your upload POST address:
@@ -35,6 +41,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   declarations: [
     ListComponent,
     OverviewComponent,
+    OwnerComponent,
   ],
   imports: [
     CommonModule,
@@ -47,7 +54,14 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     BsDropdownModule.forRoot(),
     TabsModule.forRoot(),
     DropzoneModule,
-    LeafletModule
+    LeafletModule,
+    NgxSliderModule,
+    SimplebarAngularModule,
+    CountUpModule,
+    SlickCarouselModule,
+    NgApexchartsModule,
+    TooltipModule,
+    DropzoneModule,
   ],
   providers: [
     {

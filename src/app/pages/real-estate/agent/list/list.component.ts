@@ -11,8 +11,11 @@ import { addagentData, deleteagentData, fetchagentData, updateagentData } from '
 import { selectagentData } from 'src/app/store/Agent/agent-selector';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { cloneDeep } from 'lodash';
+import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/services/auth.service';
+import { ClientService } from 'src/app/core/services/client.service';
 
-
+ 
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -36,20 +39,26 @@ export class ListComponent {
   bedroom: any;
   term: any
   files: File[] = [];
+  role:any
   @ViewChild('addAgent', { static: false }) addAgent?: ModalDirective;
   @ViewChild('deleteRecordModal', { static: false }) deleteRecordModal?: ModalDirective;
   deleteID: any;
 
-  constructor(private formBuilder: UntypedFormBuilder, private datePipe: DatePipe, public store: Store) {
+  constructor(private formBuilder: UntypedFormBuilder, private datePipe: DatePipe, public store: Store,
+    private authService: AuthenticationService,private toastr: ToastrService,private clientService:ClientService
+    
+    ) {
   }
 
   ngOnInit(): void {
+    this.role=this.authService.currentUser()['scope']
+    console.log('role in the properties grid ',this.role);
     /**
      * BreadCrumb
      */
     this.breadCrumbItems = [
-      { label: 'Agents', active: true },
-      { label: 'Agent List', active: true }
+      { label: 'Clients', active: true },
+      { label: 'Client List', active: true }
     ];
 
     /**
@@ -68,14 +77,20 @@ export class ListComponent {
 
     // store data
     setTimeout(() => {
-      this.store.dispatch(fetchagentData());
-      this.store.select(selectagentData).subscribe((data) => {
-        this.agents = data;
-        this.agentlist = data;
-        this.agents = cloneDeep(this.agentlist.slice(0, 10))
-      });
-      document.getElementById('elmLoader')?.classList.add('d-none')
+      this.loadClients()
     }, 1000)
+  }
+
+
+  loadClients() {
+    this.clientService.getAllClient().subscribe((data) => {
+      console.log(data);
+      this.agents = data;
+      this.agentlist = data;
+      this.agents = cloneDeep(this.agentlist.slice(0, 10))
+    });
+    document.getElementById('elmLoader')?.classList.add('d-none')
+
   }
 
   // File Upload
@@ -85,75 +100,29 @@ export class ListComponent {
     previewsContainer: false,
   };
 
-  uploadedFiles: any[] = [];
 
-  // File Upload
-  imageURL: any;
-  onUploadSuccess(event: any) {
-    setTimeout(() => {
-      this.uploadedFiles.push(event[0]);
-      this.agentForm.controls['img'].setValue(event[0].dataURL);
-    }, 0);
-  }
 
-  // File Remove
-  removeFile(event: any) {
-    this.uploadedFiles.splice(this.uploadedFiles.indexOf(event), 1);
-  }
 
-  // Edit Data
-  editList(id: any) {
-    this.addAgent?.show()
-    var modaltitle = document.querySelector('.modal-title') as HTMLAreaElement
-    modaltitle.innerHTML = 'Edit Product'
-    var modalbtn = document.getElementById('add-btn') as HTMLAreaElement
-    modalbtn.innerHTML = 'Update'
-    var editData = this.agents[id]
-    this.uploadedFiles.splice(this.uploadedFiles.indexOf(event), 1);
-    this.uploadedFiles.push({ 'dataURL': editData.img, 'name': editData.imgalt, 'size': 1024, });
-    this.agentForm.patchValue(this.agents[id]);
-  }
+ 
 
-  // Add Property
-  saveProperty() {
-    if (this.agentForm.valid) {
-      if (this.agentForm.get('id')?.value) {
-        const updatedData = this.agentForm.value;
-        this.store.dispatch(updateagentData({ updatedData }));
-      }
-      else {
-        this.agentForm.controls['id'].setValue(this.agentlist.length + 1)
-        const currentDate = new Date();
-        const formattedDate = this.datePipe.transform(currentDate, 'dd MMM, yyyy');
-        this.agentForm.controls['joiningdate'].setValue(formattedDate);
-        const newData = {
-          ...this.agentForm.value,
-        }
-        this.store.dispatch(addagentData({ newData }));
-      }
-      this.uploadedFiles = [];
-      this.agentForm.reset();
-      this.addAgent?.hide();
-      var modaltitle = document.querySelector('.modal-title') as HTMLAreaElement
-      modaltitle.innerHTML = 'Add Product'
-      var modalbtn = document.getElementById('add-btn') as HTMLAreaElement
-      modalbtn.innerHTML = 'Add'
-    }
 
-  }
+
 
   // Delete Product
   removeItem(id: any) {
     this.deleteID = id
     this.deleteRecordModal?.show()
   }
-  confirmDelete(id: any) {
-    if (id) {
-      this.store.dispatch(deleteagentData({ id: this.deleteID.toString() }));
-    }
-    this.store.dispatch(deleteagentData({ id: this.checkedValGet.toString() }));
-    this.deleteRecordModal?.hide();
-    this.masterSelected = false;
+  confirmDelete() {
+    this.clientService.deleteClient(this.deleteID).subscribe(data=>{
+      this.toastr.success('client deleted successfuly !', 'Succes'); 
+      this.deleteRecordModal?.hide()
+      this.loadClients();
+    
+    },error=>{
+      this.toastr.error('Erreur deleting client.', 'Erreur'); 
+      console.log(error)
+    });
   }
 
   checkedValGet: any[] = [];

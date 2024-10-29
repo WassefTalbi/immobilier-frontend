@@ -51,7 +51,7 @@ export class ListComponent {
   constructor(private formBuilder: UntypedFormBuilder, public store: Store,private agencyService:AgencyService,
     private authService: AuthenticationService,private toastr: ToastrService) {
   }
-
+ 
   ngOnInit(): void {
     this.role=this.authService.currentUser()['scope']
     console.log('role in the properties grid ',this.role);
