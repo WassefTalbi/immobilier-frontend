@@ -23,7 +23,7 @@ const routes: Routes = [
     component: MapComponent
   },
   {
-    path: 'property-overview',
+    path: 'property-overview/:id',
     component: PropertyOverviewComponent
   },
   {

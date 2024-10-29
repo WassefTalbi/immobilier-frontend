@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { GlobalComponent } from 'src/app/global-component';
+import { GlobalComponent } from 'src/app/global-component'; 
 const API_URL = GlobalComponent.API_URL;
 const PROPERTIES=GlobalComponent.PROPERTIES;
 @Injectable({

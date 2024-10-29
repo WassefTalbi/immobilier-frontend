@@ -11,7 +11,7 @@ const routes: Routes = [
     component: ListComponent
   },
   {
-    path: 'overview',
+    path: 'overview/:id',
     component: OverviewComponent
   },
 ];

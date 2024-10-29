@@ -9,6 +9,7 @@ import { Options } from '@angular-slider/ngx-slider';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { RealestateService } from 'src/app/core/services/realestate.service';
 import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
+import { AuthenticationService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-grid',
@@ -19,6 +20,7 @@ import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
 
 // Grid Component
 export class GridComponent {
+  role:any;
   files: File[] = [];
   page: number = 1;
   selectedPropertyType: string = "Villa";
@@ -53,11 +55,13 @@ export class GridComponent {
   constructor(
     private formBuilder: UntypedFormBuilder,
     private propertyService: RealestateService,
-  
+    private authService: AuthenticationService,
     private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
+    this.role=this.authService.currentUser()['scope']
+    console.log('role in the properties grid ',this.role);
     // Breadcrumb
     this.breadCrumbItems = [
       { label: 'Real Estate', active: true },
@@ -192,9 +196,11 @@ export class GridComponent {
 
   editProperty(id: any) {
     this.propertyService.getPropertyById(id).subscribe((property: any) => {
+      console.log(property);
+      
       this.editpropertyId = id;
       this.propertyFormEdit.patchValue({
-        title: property.nom,
+        title: property.title,
         type: property.type,
         bedroom: property.bedroom,
         bathroom: property.bathroom,
@@ -202,7 +208,10 @@ export class GridComponent {
         price: property.price,
         requirement: property.requirement,
         location: property.location,
-        additionalFeatures: property.additionalFeatures
+      });
+      const featureNames = property.features.map((feature: any) => feature.featureName);
+      this.features.forEach(feature => {
+        feature.selected = featureNames.includes(feature.id);
       });
       this.logoUrl = `http://localhost:1919/user/image/${property.image}`;
       this.editPropertyModal?.show();
@@ -211,14 +220,25 @@ export class GridComponent {
   
 
   updateProperty() {
-    this.submitted = true;
-    if (this.propertyFormEdit.valid) {
-      const updateData = new FormData();
-      updateData.append('title', this.propertyFormEdit.value.title); // Corrected property name from 'nom' to 'title'
+
+    
+      const formData = new FormData();
+      formData.append('title', this.propertyFormEdit.get('title')?.value);
+      formData.append('type', this.propertyFormEdit.get('type')?.value);
+      formData.append('bedroom', this.propertyFormEdit.get('bedroom')?.value);
+      formData.append('bathroom', this.propertyFormEdit.get('bathroom')?.value);
+      formData.append('area', this.propertyFormEdit.get('area')?.value);
+      formData.append('price', this.propertyFormEdit.get('price')?.value);
+      formData.append('requirement', this.propertyFormEdit.get('requirement')?.value);
+      formData.append('location', this.propertyFormEdit.get('location')?.value);
+      this.additionalFeatures.forEach((feature) => {
+        formData.append('additionalFeatures', feature);
+      });
+
       if (this.fileLogo) {
-        updateData.append('image', this.fileLogo); // Corrected property name from 'logo' to 'image'
+        formData.append('image', this.fileLogo); 
       }
-      this.propertyService.updateProperty(this.editpropertyId, updateData).subscribe(
+      this.propertyService.updateProperty(this.editpropertyId, formData).subscribe(
         response => {
           this.toastr.success('Property updated successfully!', 'Success');  
           console.log('Property updated successfully:', response);
@@ -230,7 +250,7 @@ export class GridComponent {
           console.error('Error updating property:', error);
         }
       );
-    }
+    
   }
 
   // Hide/Show Filter

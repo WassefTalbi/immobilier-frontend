@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 // import { SwiperOptions } from 'swiper';
 
 import * as L from 'leaflet';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-property-overview',
@@ -11,11 +13,17 @@ import * as L from 'leaflet';
 
 // Property Overview Component
 export class PropertyOverviewComponent {
-
+  currentPropertyId:any
+  constructor(
+    private route: ActivatedRoute,
+    private toastr: ToastrService 
+  ) { }
+ 
   // bread crumb items
   breadCrumbItems!: Array<{}>;
 
   ngOnInit(): void {
+    this.getCurrentPropertyId()
     /**
      * BreadCrumb
      */
@@ -24,7 +32,12 @@ export class PropertyOverviewComponent {
       { label: 'Property Overview', active: true }
     ];
   }
-
+  getCurrentPropertyId() {
+    this.route.paramMap.subscribe(params => {
+      this.currentPropertyId = params.get('id');
+      console.log("current property",this.currentPropertyId);
+    });
+  }
   slidesConfig = {
     // Configuration options for the ngx-slick-carousel
     slidesToShow: 1,
