@@ -9,6 +9,7 @@ import { UserProfileService } from 'src/app/core/services/user.service';
 import { Register } from 'src/app/store/Authentication/authentication.actions';
 import {chatMessagesData} from "../../pages/forms/advance/data";
 import {HttpErrorResponse} from "@angular/common/http";
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -28,13 +29,15 @@ export class RegisterComponent {
   passwordError = '';
   firstNameError = '';
   lastNameError = '';
+  fileLogo:any
+  addClientError:any
   // set the current year
   year: number = new Date().getFullYear();
 
   fieldTextType!: boolean;
 
   searchTerm: string = '';
-  constructor(private formBuilder: UntypedFormBuilder,    private authService:AuthenticationService,
+  constructor(private formBuilder: UntypedFormBuilder, private toastr: ToastrService,   private authService:AuthenticationService,
               private router: Router,) { }
 
   ngOnInit(): void {
@@ -46,7 +49,8 @@ export class RegisterComponent {
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.pattern('(?=.*[a-z])'), Validators.pattern('(?=.*[A-Z])'), Validators.pattern('(?=.*\\d)'), Validators.minLength(8)]],
-      mobileNumber: ['', Validators.required] // Add mobileNumber field
+      mobileNumber: ['', Validators.required] ,
+      photo:[null]
     });
   }
 
@@ -106,6 +110,12 @@ export class RegisterComponent {
     this.searchTerm = searchValue;
     this.filterCountries();
   }
+  onUploadSuccess(event: any) {
+    setTimeout(() => {
+      this.fileLogo = event.target.files[0];
+   
+    }, 0);
+  }
 onSubmit() {
   this.submitted = true;
   this.emailError = '';
@@ -119,31 +129,44 @@ onSubmit() {
   const lastName = this.f['lastName'].value;
   const email = this.f['email'].value;
   const password = this.f['password'].value;
+  
+  const registerData = new FormData();
+  registerData.append('firstName', firstName);
+  registerData.append('lastName', lastName);
+  registerData.append('email', email);
+  registerData.append('password',password );
+  registerData.append('mobileNumber', fmobileNumber);
 
-  // Call AuthService method to register user
-  this.authService.registerUser(firstName, lastName, email, password, mobileNumber).subscribe(
+  if (this.fileLogo) {
+    registerData.append('photoProfile', this.fileLogo);
+  }
+ 
+  this.authService.registerUser(registerData).subscribe(
     (response) => {
       this.router.navigate(['/auth/login']);
+      this.toastr.success('signup successfully ,verify email', 'Succes');
+     this.signupForm.reset()
+     this.fileLogo=null
       console.log('User registered successfully:', response);
     },
     (error) => {
       if (error.status === 400) {
-        if (error.error.firstName || error.error.lastName || error.error.password || error.error.email) {
-          this.firstNameError = error.error.firstName;
-          this.lastNameError = error.error.lastName;
-          this.passwordError = error.error.password;
-           this.emailError = error.error.email;
-           console.log(error.error.email)
-             }
+        let errorMessage = '';
+        for (const field in error.error) {
+          if (error.error.hasOwnProperty(field)) {
+            errorMessage += `./ ${error.error[field]} <br>`;
+          }
+        }
+        this.addClientError = errorMessage.trim();
       } else if(error.status === 500){
         if (error.error.error === 'Email already exists') {
           this.emailError = 'Email already exists';
         }else {
-          console.log('An unexpected error occurred:', error);
+       
         }
       } else {
-        console.log('An unexpected error occurred:', error);
-      }
+        this.addClientError = 'Une erreur inattendue est survenue, essayez encore';      }
+      this.toastr.error(this.addClientError || 'Erreur, veuillez réessayer', 'Erreur');
     }
   );
 

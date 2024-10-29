@@ -16,7 +16,7 @@
                               <div class="effect-circle-1 position-relative mx-auto rounded-circle d-flex align-items-center justify-content-center">
                                 <div class="effect-circle-2 position-relative mx-auto rounded-circle d-flex align-items-center justify-content-center">
                                   <div class="effect-circle-3 mx-auto rounded-circle position-relative text-white fs-4xl d-flex align-items-center justify-content-center">
-                                    Welcome to <span class="text-primary ms-1">1WayDev</span>
+                                    Welcome to <span class="text-primary ms-1">Esprit Real-estate</span>
                                   </div>
                                 </div>
                               </div>
@@ -130,7 +130,7 @@
                                     <input type="text" class="form-control rounded-end flag-input" placeholder="Enter number" required formControlName="mobileNumber" [ngClass]="{ 'is-invalid': submitted && f['mobileNumber'].errors }">
                                     <div *bsDropdownMenu class="dropdown-menu w-100 country-dropdown">
                                       <div class="p-2 px-3 pt-1 searchlist-input">
-<input type="text" class="form-control form-control-sm border search-countryList" placeholder="Search country name or country code..." (input)="onSearchChange($event)" (click)="$event.stopPropagation()" />                                      </div>
+                                          <input type="text" class="form-control form-control-sm border search-countryList" placeholder="Search country name or country code..." (input)="onSearchChange($event)" (click)="$event.stopPropagation()" />                                      </div>
                                       <ul class="list-unstyled dropdown-menu-list mb-0">
                                         <li *ngFor="let data of Default" class="dropdown-item d-flex cursor-pointer" (click)="selectValue(data)">
                                           <div class="flex-shrink-0 me-2"><img src="{{data.flagImg}}" alt="country flag" class="options-flagimg" height="20"></div>
@@ -147,6 +147,15 @@
                                     Please enter your mobile number
                                   </div>
                                 </div>
+                                <div class="mb-3">
+                                  <label class="form-label">Photo <span class="text-danger">*</span></label>
+                              
+                                  <input type="file" id="photo" class="form-control" formControlName="photo" (change)="onUploadSuccess($event)" />
+                                  <div *ngIf="signupForm.get('photo')?.hasError('required') && signupForm.get('photo')?.touched" class="text-danger">
+                                    photo  is required.
+                                  </div>
+                                
+                              </div>
                                 <div class="mb-4">
                                   <p class="mb-0 fs-xs text-muted fst-italic">By registering you agree to the Steex <a routerLink="/pages/term-conditions" class="text-primary text-decoration-underline fst-normal fw-medium">Terms of Use</a></p>
                                 </div>

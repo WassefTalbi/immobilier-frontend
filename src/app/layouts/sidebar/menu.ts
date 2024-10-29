@@ -4,51 +4,42 @@ export const MENU: MenuItem[] = [
 
   {
     id: 1,
-    label: 'MENUITEMS.DASHBOARD.TEXT',
-    icon: 'ph-gauge',
-    link: '/real-estate',
-  },
-
-
-  {
-    id: 2,
     label: 'MENUITEMS.APPS.LIST.REALESTATE',
     icon: 'ph-buildings',
-    parentId: 2,
     subItems: [
         {
-            id: 3,
+            id: 2,
             label: 'MENUITEMS.APPS.LIST.LISTINGGRID',
             link: '/real-estate/grid',
-            parentId: 2
+            parentId: 1
         },
     
         {
-            id: 5,
+            id: 3,
             label: 'MENUITEMS.APPS.LIST.AGENT',
-            parentId: 46,
+            parentId: 1,
             isCollapsed: true,
             subItems: [
                 {
-                    id: 52,
+                    id: 4,
                     label: 'MENUITEMS.APPS.LIST.LISTVIEW',
                     link: '/real-estate/agent/list',
-                    parentId: 51
+                    parentId: 3
                 },
             
             ]
         },
         {
-            id: 55,
+            id: 5,
             label: 'MENUITEMS.APPS.LIST.AGENCIES',
-            parentId: 46,
+            parentId: 1,
             isCollapsed: true,
             subItems: [
                 {
-                    id: 56,
+                    id: 6,
                     label: 'MENUITEMS.APPS.LIST.LISTVIEW',
                     link: '/real-estate/agencies/list',
-                    parentId: 55
+                    parentId: 5
                 },
                
             ]

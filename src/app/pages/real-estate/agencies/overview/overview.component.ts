@@ -35,6 +35,7 @@ export class OverviewComponent {
   agency:any
   properties:any
   currentAgencyId:any
+  nbrProperties:any
   constructor(
     public store: Store,
     private route: ActivatedRoute,
@@ -79,6 +80,7 @@ export class OverviewComponent {
     this.agencyService.getAgencyById(this.currentAgencyId).subscribe((data) => {
       this.agency = data;
       this.properties=data.properties
+      this.nbrProperties=this.properties.length
       console.log('display data of agency', data);
     });
   }

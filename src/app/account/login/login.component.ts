@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit{
 
     let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     if(currentUser['scope'] === 'ADMIN'){
-      this.router.navigate(['/']);
+      this.router.navigate(['/real-estate/grid']);
     } else if(currentUser['scope'] === 'USER'){
       this.router.navigate(['/User']);
     }else if(currentUser['scope'] === 'AGENCE'){
@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit{
         if (response && response.accessToken) {
           console.log(response);
           if(this.authService.currentUser()['scope'] === 'ADMIN'){
-            this.router.navigate(['/']);
+            this.router.navigate(['/real-estate/grid']);
           } else if(this.authService.currentUser()['scope'] === 'User') {
             this.router.navigate(['/User']);
           }else{

@@ -31,24 +31,17 @@
                         <tbody class="list form-check-all">
                             @for (data of agents; track $index) {
                             <tr id="{{data.id}}">
-                                <td>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="checkAll" value="{{data.id}}" [(ngModel)]="data.state" (change)="onCheckboxChange($event)" />
-                                        <label class="form-check-label"></label>
-                                    </div>
-                                </td>
-                                <td class="joining_date">{{data.joiningdate}}</td>
+                              
                                 <td class="agent_Name">
                                     <div class="d-flex align-items-center gap-2">
                                         <img src="http://localhost:1919/user/image/{{data.photoProfile}}" alt="" class="avatar-xs rounded">
-                                        <a routerLink="/real-estate/agent/overview" class="text-reset text-capitalize">{{data.name}}</a>
+                                        <a routerLink="/real-estate/agent/overview" class="text-reset text-capitalize">{{data.firstName}}</a>
                                     </div>
                                 </td>
-                                <td class="address">{{data.location}}</td>
+                                <td class="lastName">{{data.lastName}}</td>
                                 <td class="email">{{data.email}}</td>
-                                <td class="contact">{{data.contact}}</td>
-                                <td class="status"><span class="badge" [ngClass]="{'bg-success-subtle text-success':data.status === 'Active','bg-danger-subtle text-danger':data.status === 'Unactive'}">{{data.status}}</span>
-                                </td>
+                                <td class="contact">{{data.phone}}</td>
+                                
                                 <td>
                                     <ul class="d-flex gap-2 list-unstyled mb-0">
                                         <li>

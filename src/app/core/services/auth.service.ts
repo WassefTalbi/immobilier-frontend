@@ -86,8 +86,8 @@ export class AuthenticationService {
             })
         );
     }
-  registerUser(firstName: string, lastName: string, email: string, password: string, mobileNumber: string) {
-    return this.http.post<any>(AUTH_API + 'register', { firstName, lastName, email, password, mobileNumber });
+  registerUser(client:any) {
+    return this.http.post<any>(AUTH_API + 'register-client',client );
   }
 
 
