@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit{
     if(currentUser['scope'] === 'ADMIN'){
       this.router.navigate(['/real-estate/grid']);
     } else if(currentUser['scope'] === 'USER'){
-      this.router.navigate(['/User']);
+      this.router.navigate(['/User/real-estate/grid']);
     }else if(currentUser['scope'] === 'AGENCE'){
       this.router.navigate(['/Agency/real-estate/agencies/owner']);
     }
@@ -67,8 +67,8 @@ export class LoginComponent implements OnInit{
           console.log(response);
           if(this.authService.currentUser()['scope'] === 'ADMIN'){
             this.router.navigate(['/real-estate/grid']);
-          } else if(this.authService.currentUser()['scope'] === 'User') {
-            this.router.navigate(['/User']);
+          } else if(this.authService.currentUser()['scope'] === 'USER') {
+            this.router.navigate(['/User/real-estate/grid']);
           }else{
             this.router.navigate(['/Agency/real-estate/agencies/owner']);
 

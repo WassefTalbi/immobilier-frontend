@@ -3,12 +3,20 @@ import { MenuItem } from "./menu.model";
 export const MENU: MenuItem[] = [
 
   {
-    id: 4,
+    id: 1,
     label: 'Properties owner  ',
-    icon: 'ph-calendar',
+    icon: 'ph-buildings',
     link: '/Agency/real-estate/agencies/owner',
-    parentId: 3
+   
   },
+  {
+    id: 2,
+    label: 'Properties ',
+    icon: 'ph-buildings',
+    link: '/User/real-estate/grid',
+   
+  },
+
  
  
 ]

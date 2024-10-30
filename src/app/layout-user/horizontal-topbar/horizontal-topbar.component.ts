@@ -3,6 +3,7 @@ import { MenuItem } from './menu.model';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { MENU } from './menu';
+import { AuthenticationService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-horizontal-topbar-user',
@@ -15,21 +16,30 @@ export class HorizontalTopbarComponent {
   isMoreMenu: boolean = false;
   AllmenuItems: MenuItem[] = [];
   navData: any;
-
+  role:any
   @ViewChild('sideMenu') sideMenu!: ElementRef;
   @Output() mobileMenuButtonClicked = new EventEmitter();
 
-  constructor(private router: Router, public translate: TranslateService, private renderer: Renderer2, private elementRef: ElementRef) {
+  constructor(private router: Router, public translate: TranslateService,
+     private renderer: Renderer2, 
+     private authService: AuthenticationService,
+     private elementRef: ElementRef) {
     translate.setDefaultLang('en');
   }
 
   ngOnInit(): void {
+    this.role=this.authService.currentUser()['scope']
     // Menu Items
     this.menuItems = MENU;
     this.AllmenuItems = MENU;
     // Initialize the navData and menuItems
     this.navData = MENU;
     this.menuItems = this.navData;
+    this.menuItems = MENU.filter(menuItem => {
+      if (this.role === 'AGENCE' && menuItem.id === 1) return true;
+      if (this.role === 'USER' && menuItem.id === 2) return true;
+      return false;
+    });
     setTimeout(() => {
       this.updateMenu();
     }, 1000);
@@ -81,21 +91,7 @@ export class HorizontalTopbarComponent {
         }
       }
     }
-    const moreMenuItem = {
-      id: "more",
-      label: "More",
-      icon: 'ri-briefcase-2-line',
-      subItems: hiddenItems,
-      link: "/#",
-      stateVariables: this.isMoreMenu,
-      click: (e: any) => {
-        e.preventDefault();
-        this.isMoreMenu = !this.isMoreMenu;
-      },
-    };
 
-    const updatedMenuItems = [...visibleItems, moreMenuItem];
-    this.menuItems = updatedMenuItems;
 
   }
 
