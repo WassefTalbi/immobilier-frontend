@@ -27,10 +27,11 @@
                     class="badge fs-xxs mb-3">
                       <i class="bi bi-house-door align-baseline me-1"></i>{{ property.type }}
                   </span>
-                    <button *ngIf="role=='USER'" type="button" class="btn btn-subtle-warning custom-toggle float-end btn-icon btn-sm" data-bs-toggle="button">
-                        <span class="icon-on"><i class="bi bi-star"></i></span>
-                        <span class="icon-off"><i class="bi bi-star-fill"></i></span>
-                    </button>
+    
+                        <rating *ngIf="role=='USER'" class=" custom-toggle float-end btn-icon btn-sm"  [(ngModel)]="rating" [max]="5" style="color:var(--tb-warning); font-size: 25px;" 
+                                (ngModelChange)="rateProperty($event)">
+                        </rating>
+                   
                     <h6 class="card-title">{{ property.title }}</h6>
                     <div class="text-muted hstack gap-2 flex-wrap list-unstyled mb-3">
                         <div>

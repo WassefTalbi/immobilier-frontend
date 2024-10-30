@@ -37,6 +37,7 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { RatingModule } from 'ngx-bootstrap/rating';
 
 // Component
 import { GridComponent } from './grid/grid.component';
@@ -72,6 +73,8 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     PaginationModule,
     ModalModule.forRoot(),
     BsDropdownModule.forRoot(),
+    RatingModule.forRoot(),
+
     CountUpModule,
     LeafletModule,
     SlickCarouselModule,

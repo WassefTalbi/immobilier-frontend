@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { GlobalComponent } from 'src/app/global-component'; 
 const API_URL = GlobalComponent.API_URL;
 const PROPERTIES=GlobalComponent.PROPERTIES;
+const RATING=GlobalComponent.RATING;
 @Injectable({
   providedIn: 'root'
 })
@@ -32,5 +33,14 @@ export class RealestateService {
 
   deleteProperty(id: number): Observable<any> {
     return this.http.delete(`${API_URL+PROPERTIES}delete/${id}`);
+  }
+
+  rateProperty(propertyId: number,userId: number, score: number): Observable<any> {
+
+    const body = { "userId":userId, 
+    "propertyId":propertyId,
+     "score": score};
+
+    return this.http.post(`${API_URL+RATING}rate`, body);
   }
 }

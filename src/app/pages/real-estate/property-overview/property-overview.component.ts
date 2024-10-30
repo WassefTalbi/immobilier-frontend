@@ -6,6 +6,7 @@ import * as L from 'leaflet';
 import { ToastrService } from 'ngx-toastr';
 import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { RealestateService } from 'src/app/core/services/realestate.service';
+import { UserProfileService } from 'src/app/core/services/user.service';
 
 @Component({
   selector: 'app-property-overview',
@@ -19,18 +20,38 @@ export class PropertyOverviewComponent {
  property:any;
  agencyOwner:any;
  role:any
+ currentUserId:any
+ rating: number = 0;
+
   constructor(
     private route: ActivatedRoute,
     private toastr: ToastrService ,
     private realeStateService:RealestateService,
     private authService: AuthenticationService,
-  ) { }
+    private userService: UserProfileService  ) { }
  
   // bread crumb items
   breadCrumbItems!: Array<{}>;
 
   ngOnInit(): void {
     this.role=this.authService.currentUser()['scope']
+    const user = this.authService.currentUser();
+    this.userService.getCurrentUser().subscribe(
+      user => {
+        if (user) { 
+          this.currentUserId = user.id;
+          console.log("User:", user);
+        } else {
+          console.warn("No user data received.");
+        }
+      
+      },
+      error => {
+        console.error('Error:', error);
+      }
+    );
+
+
     this.getCurrentPropertyId()
     this.loadProperty()
     /**
@@ -52,8 +73,34 @@ export class PropertyOverviewComponent {
     this.realeStateService.getPropertyById(this.currentPropertyId).subscribe((data) => {
       this.property = data;
       console.log('display data', data);
+      const userRating = this.property.ratings.find((rating:any) => rating.user.id == this.currentUserId);
+      if (userRating) {
+        this.rating = userRating.score; 
+        console.log("the score is",userRating.score);
+        
+      } else {
+        this.rating = 0; 
+      }
+    });
+}
+  onRateChange(newRating: number) {
+    this.rating = newRating;
+    this.rateProperty(this.rating);
+  }
+  rateProperty(score: number) {
+    this.realeStateService.rateProperty(this.currentPropertyId, this.currentUserId, score).subscribe({
+      next: (response) => {
+        this.toastr.success('Rating submitted successfully.');
+        console.log('Rating response:', response);
+        this.loadProperty()
+      },
+      error: (error) => {
+        this.toastr.error('Error submitting rating.');
+        console.error('Rating error:', error);
+      }
     });
   }
+
 
   slidesConfig = {
     // Configuration options for the ngx-slick-carousel

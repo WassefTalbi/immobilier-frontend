@@ -9,6 +9,7 @@ export const GlobalComponent = {
   PROPERTIES:'properties/',
   models: 'modelSTT/',
   user: 'user/',
+  RATING:'rating/'
 
 
 
