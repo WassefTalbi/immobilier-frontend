@@ -178,7 +178,7 @@ export class ListComponent {
   // filterdata
   filterdata() {
     if (this.term) {
-      this.agents = this.agentlist.filter((el: any) => el.name.toLowerCase().includes(this.term.toLowerCase()))
+      this.agents = this.agentlist.filter((el: any) => el.email.toLowerCase().includes(this.term.toLowerCase()))
     } else {
       this.agents = this.agentlist.slice(0, 10)
     }
