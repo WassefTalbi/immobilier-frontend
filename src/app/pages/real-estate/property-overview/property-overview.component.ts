@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import * as L from 'leaflet';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from 'src/app/core/services/auth.service';
 import { RealestateService } from 'src/app/core/services/realestate.service';
 
 @Component({
@@ -17,17 +18,19 @@ export class PropertyOverviewComponent {
   currentPropertyId:any
  property:any;
  agencyOwner:any;
-
+ role:any
   constructor(
     private route: ActivatedRoute,
     private toastr: ToastrService ,
-    private realeStateService:RealestateService
+    private realeStateService:RealestateService,
+    private authService: AuthenticationService,
   ) { }
  
   // bread crumb items
   breadCrumbItems!: Array<{}>;
 
   ngOnInit(): void {
+    this.role=this.authService.currentUser()['scope']
     this.getCurrentPropertyId()
     this.loadProperty()
     /**
