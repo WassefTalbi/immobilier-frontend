@@ -96,7 +96,7 @@
 
                                 <div class="mb-3">
                                   <label for="useremail" class="form-label">Email <span class="text-danger">*</span></label>
-                                  <input type="email" class="form-control" id="useremail" placeholder="Enter email address" required formControlName="email" [ngClass]="{ 'is-invalid': submitted && !f['password'].errors }">
+                                  <input type="email" class="form-control" id="useremail" placeholder="Enter email address" required formControlName="email" [ngClass]="{ 'is-invalid': submitted && !f['email'].errors }">
                                   <div *ngIf="emailError" class="alert alert-danger mt-1" role="alert">
                                     {{ emailError }}
                                   </div>

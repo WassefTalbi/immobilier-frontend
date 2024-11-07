@@ -52,21 +52,7 @@ import {AdminGuard} from "./core/guards/admin.guard";
 import {userGuard} from "./core/guards/user.guard";
 import {LayoutUserModule} from "./layout-user/layout-user.module";
 import {authInterceptorProviders} from "./core/helpers/auth.interceptor";
-//import { SocialLoginModule, SocialAuthServiceConfig, GoogleLoginProvider } from 'angularx-social-login';
 
-/*
-const config: SocialAuthServiceConfig = {
-  autoLogin: false,
-  providers: [
-    {
-      id: GoogleLoginProvider.PROVIDER_ID,
-      provider: new GoogleLoginProvider("1032212622254-h1cmf4l5uskqgncvh3k7iv2l1g5bafln.apps.googleusercontent.com")
-    }
-  ]
-};
-export function provideConfig() {
-  return config;
-}*/
 export function createTranslateLoader(http: HttpClient): any {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 }

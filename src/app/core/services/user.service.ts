@@ -83,4 +83,14 @@ export class UserProfileService {
   getImage(imageName: string): Observable<Blob> {
     return this.http.get(API_URL+USER+`image/${imageName}`, { responseType: 'blob' });
   }
+
+  profileManage(profile:any) {
+    return this.http.put<any>(API_URL + USER+'profile-manage',profile );
+  }
+  profileManageAgency(profile:any) {
+    return this.http.put<any>(API_URL + USER+'agency-profile-manage',profile );
+  }
+  changePassword(payload: { oldPassword: string, newPassword: string }): Observable<any> {
+    return this.http.post(API_URL+USER+'change-password', payload);
+  }
 }

@@ -80,7 +80,6 @@ currentUser:any;
      this.userService.getCurrentUser().subscribe(
         user => {
           this.currentUser = user;
-console.log("&&&&&&&&&&&");
           console.log(this.currentUser);
           if (this.currentUser===null) {
             this.authService.logout();
