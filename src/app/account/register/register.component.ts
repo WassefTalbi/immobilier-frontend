@@ -37,6 +37,7 @@ export class RegisterComponent {
   fieldTextType!: boolean;
 
   searchTerm: string = '';
+  roleError = '';
   constructor(private formBuilder: UntypedFormBuilder, private toastr: ToastrService,   private authService:AuthenticationService,
               private router: Router,) { }
 
@@ -50,7 +51,8 @@ export class RegisterComponent {
       lastName: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.pattern('(?=.*[a-z])'), Validators.pattern('(?=.*[A-Z])'), Validators.pattern('(?=.*\\d)'), Validators.minLength(8)]],
       mobileNumber: ['', Validators.required] ,
-      photo:[null]
+      photo:[null],
+      role: ['', Validators.required]
     });
   }
 
@@ -122,6 +124,7 @@ onSubmit() {
   this.passwordError = '';
   this.firstNameError = '';
   this.lastNameError = '';
+  this.roleError = '';
   const fmobileNumber = this.f['mobileNumber'].value;
   let countryCode = this.selectedCountry.countryCode;
   let mobileNumber = `${countryCode} ${fmobileNumber}`;
@@ -129,14 +132,15 @@ onSubmit() {
   const lastName = this.f['lastName'].value;
   const email = this.f['email'].value;
   const password = this.f['password'].value;
-  
+  const role = this.f['role'].value;
+
   const registerData = new FormData();
   registerData.append('firstName', firstName);
   registerData.append('lastName', lastName);
   registerData.append('email', email);
   registerData.append('password',password );
   registerData.append('mobileNumber', fmobileNumber);
-
+  registerData.append('roleType', role);
   if (this.fileLogo) {
     registerData.append('photoProfile', this.fileLogo);
   }
@@ -159,7 +163,7 @@ onSubmit() {
         }
         this.addClientError = errorMessage.trim();
       } else if(error.status === 500){
-        if (error.error.error === 'Email already exists') {
+        if (error.error.error === 'Email already exists') { 
           this.emailError = 'Email already exists';
         }else {
        

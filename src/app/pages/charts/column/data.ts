@@ -2463,7 +2463,7 @@ const dynamicLoadedChart: ChartOptions = {
             value: 1,
         },
     },
-  },
+  }as any,
   tooltip: {
     x: {
         show: false,

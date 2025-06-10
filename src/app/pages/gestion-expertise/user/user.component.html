@@ -1,0 +1,127 @@
+<!-- Start Breadcrumbs -->
+<app-breadcrumbs title="Liste des Utilisateurs" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<!-- End Breadcrumbs -->
+
+<div class="card">
+    <div class="card-body">
+        <div class="row align-items-center g-2">
+            <div class="col-lg-3 me-auto">
+                <h6 class="card-title mb-0">Utilisateurs 
+                    <span class="badge bg-primary ms-1 align-baseline">{{filteredInstructors.length}}</span>
+                </h6>
+            </div>
+            <div class="col-lg-2">
+                <div class="search-box">
+                    <input type="text" class="form-control search" 
+                           placeholder="Rechercher des utilisateurs..." 
+                           [(ngModel)]="term" (keyup)="filterdata()">
+                    <i class="ri-search-line search-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row row-cols-xxl-5">
+    @for (data of displayedInstructors; track $index) {
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 ms-auto">
+                            <div dropdown class="dropdown">
+                                <button dropdownToggle class="btn btn-light btn-icon btn-sm" type="button">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul *bsDropdownMenu class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item remove-list" href="javascript:void(0);" (click)="removeItem(data.id)" data-remove-id="9" data-bs-toggle="modal"><i class="bi bi-trash3 me-1 align-baseline"></i> Supprimer</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4 mb-3">
+                        <div class="position-relative d-inline-block">
+                            <img [src]="data.photoProfile ? 'http://localhost:1919/user/image/' + data.photoProfile : 'assets/images/users/user-dummy-img.jpg'" alt="Photo de profil" class="avatar-md rounded">
+                        </div>
+                        <h6 class="fs-md mt-4 mb-1">{{data.firstName}} {{data.lastName}}</h6>
+                    </div>
+                    <ul class="list-unstyled text-muted vstack gap-2 mb-0 overflow-hidden">
+                        <li>
+                            <a href="mailto:{{data.email}}" class="text-reset d-block text-truncate"><i class="bi bi-envelope align-baseline me-1"></i> {{data.email}}</a>
+                        </li>
+                        <li>
+                            <a href="tel:{{data.phone}}" class="text-reset"><i class="bi bi-telephone align-baseline me-1"></i> {{data.phone}}</a>
+                        </li>
+                        <li class="d-flex align-items-center">
+                            <i class="bi me-2 fs-5" 
+                               [ngClass]="data.nonLocked ? 'bi-unlock text-success' : 'bi-lock text-danger'">
+                            </i>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" 
+                                       [checked]="data.nonLocked" 
+                                       (change)="toggleBlock(data.id, !data.nonLocked)">
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div><!--end card-->
+        </div><!--end col-->
+        }
+</div>
+
+<div class="noresult" [style.display]="(term && displayedInstructors.length === 0) ? 'block' : 'none'">
+    <div class="text-center py-4">
+        <i class="ph-magnifying-glass fs-1 text-primary"></i>
+        <h5 class="mt-2">Aucun résultat trouvé</h5>
+        <p class="text-muted mb-0">Aucun utilisateur ne correspond à votre recherche.</p>
+    </div>
+</div>
+
+<div id="elmLoader" [class.d-none]="instructorGrid.length > 0">
+    <div class="spinner-border text-primary avatar-sm" role="status">
+        <span class="visually-hidden">Chargement...</span>
+    </div>
+</div>
+
+<div class="row align-items-center mb-3" id="pagination-element" 
+     [class.d-none]="term && displayedInstructors.length === 0">
+    <div class="col-sm">
+        <div class="text-muted text-center text-sm-start">
+            Affichage <span class="fw-semibold">{{displayedInstructors.length}}</span> sur 
+            <span class="fw-semibold">{{filteredInstructors.length}}</span> Résultats
+        </div>
+    </div>
+    <div class="col-sm-auto mt-3 mt-sm-0">
+        <pagination class="pagination-wrap hstack justify-content-center gap-2" 
+                   [totalItems]="filteredInstructors.length" 
+                   [itemsPerPage]="itemsPerPage" 
+                   (pageChanged)="pageChanged($event)"></pagination>
+    </div>
+</div>
+
+<!-- Modal de suppression reste inchangé -->
+<!-- deleteRecordModal -->
+<div bsModal #deleteRecordModal="bs-modal" id="deleteRecordModal" class="modal fade zoomIn">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" id="deleteRecord-close" (click)="deleteRecordModal.hide()"></button>
+            </div>
+            <div class="modal-body p-md-5">
+                <div class="text-center">
+                    <div class="text-danger">
+                        <i class="bi bi-trash display-5"></i>
+                    </div>
+                    <div class="mt-4">
+                        <h4 class="mb-2">Êtes-vous sûr ?</h4>
+                        <p class="text-muted mx-3 mb-0">Êtes-vous sûr de vouloir supprimer cet utilisateur ?</p>
+                    </div>
+                </div>
+                <div class="d-flex gap-2 justify-content-center mt-4 pt-2 mb-2">
+                    <button type="button" class="btn w-sm btn-light btn-hover" (click)="deleteRecordModal.hide()">Fermer</button>
+                    <button type="button" class="btn w-sm btn-danger btn-hover" id="delete-record" (click)="confirmDelete()">Oui, Supprimer</button>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /deleteRecordModal -->

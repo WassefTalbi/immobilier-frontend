@@ -1,0 +1,120 @@
+<!-- Breadcrumb -->
+<app-breadcrumbs title="Gestion des Rapports" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+
+<!-- Upload Section -->
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Ajouter un Rapport</h5>
+        <div class="d-flex gap-3">
+            <div class="flex-grow-1">
+                <input type="file" class="form-control" (change)="onFileSelected($event)" #fileUpload>
+            </div>
+            <button class="btn btn-primary" (click)="uploadFile()" [disabled]="!selectedFile">
+                <i class="bi bi-upload me-1"></i> Uploader
+            </button>
+        </div>
+        <div class="mt-2" *ngIf="uploadProgress > 0">
+            <div class="progress">
+                <div class="progress-bar" [style.width.%]="uploadProgress"></div>
+            </div>
+            <small class="text-muted">{{uploadProgress}}% complété</small>
+        </div>
+    </div>
+</div>
+
+<!-- Search and Stats -->
+<div class="card">
+    <div class="card-body">
+        <div class="row align-items-center g-2">
+            <div class="col-lg-3 me-auto">
+                <h6 class="card-title mb-0">Rapports 
+                    <span class="badge bg-primary ms-1 align-baseline">{{filteredReports.length}}</span>
+                </h6>
+            </div>
+            <div class="col-lg-2">
+                <div class="search-box">
+                    <input type="text" class="form-control search" 
+                           placeholder="Rechercher des rapports..." 
+                           [(ngModel)]="searchTerm" (keyup)="filterReports()">
+                    <i class="ri-search-line search-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reports Grid -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
+    <div class="col" *ngFor="let report of displayedReports; trackBy: trackById">
+        <div class="card report-card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-file-earmark-pdf fs-3 text-danger"></i>
+                <div>
+                  <h6 class="mb-0">{{ report.rapportName }}</h6>
+                </div>
+              </div>
+              
+              <button class="btn btn-sm btn-light text-danger" (click)="confirmDelete(report.id)" title="Supprimer">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+      
+            <div *ngIf="report.fileName" class="text-center mt-2">
+              <button class="btn btn-outline-primary btn-sm" (click)="openReport(report)">
+                <i class="bi bi-box-arrow-up-right me-1"></i> Ouvrir le fichier
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+  </div>
+  
+  
+
+<!-- No Results -->
+<div class="noresult" [style.display]="(searchTerm && displayedReports.length === 0) ? 'block' : 'none'">
+    <div class="text-center py-4">
+        <i class="ph-magnifying-glass fs-1 text-primary"></i>
+        <h5 class="mt-2">Aucun rapport trouvé</h5>
+        <p class="text-muted mb-0">Aucun rapport ne correspond à votre recherche.</p>
+    </div>
+</div>
+
+<!-- Pagination -->
+<div class="row align-items-center mb-3" id="pagination-element" 
+     [class.d-none]="searchTerm && displayedReports.length === 0">
+    <div class="col-sm">
+        <div class="text-muted text-center text-sm-start">
+            Affichage <span class="fw-semibold">{{displayedReports.length}}</span> sur 
+            <span class="fw-semibold">{{filteredReports.length}}</span> Résultats
+        </div>
+    </div>
+    <div class="col-sm-auto mt-3 mt-sm-0">
+        <pagination class="pagination-wrap hstack justify-content-center gap-2" 
+                   [totalItems]="filteredReports.length" 
+                   [itemsPerPage]="itemsPerPage" 
+                   (pageChanged)="pageChanged($event)"></pagination>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div bsModal #deleteModal="bs-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmer la suppression</h5>
+                <button type="button" class="btn-close" (click)="deleteModal.hide()"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer ce rapport ? Cette action est irréversible.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" (click)="deleteModal.hide()">Annuler</button>
+                <button type="button" class="btn btn-danger" (click)="deleteReport()">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>

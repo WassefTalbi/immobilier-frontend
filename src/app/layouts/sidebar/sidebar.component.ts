@@ -4,6 +4,7 @@ import { MenuItem } from './menu.model';
 import { MENU } from './menu';
 import { Router, NavigationEnd } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { AuthenticationService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -18,13 +19,13 @@ export class SidebarComponent {
   @Output() mobileMenuButtonClicked = new EventEmitter();
   lastroute: any;
 
-  constructor(private router: Router, public translate: TranslateService) {
+  constructor(private router: Router, public translate: TranslateService,private authService: AuthenticationService) {
     translate.setDefaultLang('en');
   }
 
   ngOnInit(): void {
     // Menu Items
-    this.menuItems = MENU;
+    this.menuItems = MENU//this.filterMenuItemsByUserRole(MENU);
 
     this.router.events.subscribe((event) => {
       if (document.documentElement.getAttribute('data-layout') == 'vertical' || document.documentElement.getAttribute('data-layout') == 'horizontal') {
@@ -43,6 +44,61 @@ export class SidebarComponent {
     setTimeout(() => {
       this.initActiveMenu();
     }, 0);
+  }
+
+
+ private filterMenuItemsByUserRole(menuItems: MenuItem[]): MenuItem[] {
+    const userRole = this.authService.currentUser()?.['scope']; 
+
+    const roleMenuMapping: {[key: string]: string[]} = {
+      'ADMIN': [
+        'CHATBOT',
+        'CONSULTER POWER BI',
+        'GESTION-EXPERTISE', 
+        'CONSULTER LES RAPPORT',
+        'EXTRACTION PDF',
+        'RESUME PDF',
+        'MEETING'
+      ],
+      'TECHNICIEN': [
+        'DETECTION CONTAMINATION',
+        'DETECTION CONTENEUR ',
+        'MEETING'
+      ],
+      'VERIFICATEUR': [
+        'CONSULTER LES RAPPORT',
+        'EXTRACTION PDF',
+        'RESUME PDF',
+        'CHATBOT',
+        'CONSULTER POWER BI',
+        'MEETING'
+      ],
+      'REDACTEUR': [
+        'EXTRACTION PDF',
+        'RESUME PDF',
+        'MEETING'
+      ]
+    };
+
+    if (!userRole || !roleMenuMapping[userRole]) {
+      return [];
+    }
+
+    const allowedLabels = roleMenuMapping[userRole];
+    
+    return menuItems.filter(item => {
+      // For parent items with subItems (like GESTION-EXPERTISE)
+      if (item.subItems) {
+        // Only show if the parent label is in allowedLabels
+        if (allowedLabels.includes(item.label.toUpperCase())) {
+          // ADMIN gets both subitems, others shouldn't even see the parent
+          return userRole === 'ADMIN'; 
+        }
+        return false;
+      }
+      // For regular menu items
+      return allowedLabels.includes(item.label.toUpperCase());
+    });
   }
 
   removeActivation(items: any) {
@@ -250,6 +306,6 @@ export class SidebarComponent {
   SidebarHide() {
     document.body.classList.remove('vertical-sidebar-enable');
   }
-
+ 
 
 }

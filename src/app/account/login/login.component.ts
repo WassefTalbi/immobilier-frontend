@@ -37,11 +37,14 @@ export class LoginComponent implements OnInit{
 
     let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     if(currentUser['scope'] === 'ADMIN'){
-      this.router.navigate(['/real-estate/grid']);
-    } else if(currentUser['scope'] === 'USER'){
-      this.router.navigate(['/User/real-estate/grid']);
-    }else if(currentUser['scope'] === 'AGENCE'){
-      this.router.navigate(['/Agency/real-estate/agencies/owner']);
+      this.router.navigate(['/gestion-expertise/mission']);
+    } else if(currentUser['scope'] === 'TECHNICIEN'){
+      this.router.navigate(['/gestion-expertise/contamination']);
+    }else if(currentUser['scope'] === 'VERIFICATEUR'){
+      this.router.navigate(['/gestion-expertise/rapport']);
+    }
+    else if(currentUser['scope'] === 'REDACTEUR'){
+      this.router.navigate(['/gestion-expertise/extraction']);
     }
 
     /**
@@ -66,12 +69,15 @@ export class LoginComponent implements OnInit{
         if (response && response.accessToken) {
           console.log(response);
           if(this.authService.currentUser()['scope'] === 'ADMIN'){
-            this.router.navigate(['/real-estate/grid']);
-          } else if(this.authService.currentUser()['scope'] === 'USER') {
-            this.router.navigate(['/User/real-estate/grid']);
-          }else{
-            this.router.navigate(['/Agency/real-estate/agencies/owner']);
-
+            this.router.navigate(['/gestion-expertise/mission']);
+          } else if(this.authService.currentUser()['scope'] === 'TECHNICIEN') {
+            this.router.navigate(['/gestion-expertise/contamination']);
+          }
+          else if(this.authService.currentUser()['scope'] === 'VERIFICATEUR') {
+            this.router.navigate(['/gestion-expertise/rapport']);
+          }
+          else if(this.authService.currentUser()['scope'] === 'REDACTEUR') {
+            this.router.navigate(['/gestion-expertise/extraction']);
           }
         }
       },

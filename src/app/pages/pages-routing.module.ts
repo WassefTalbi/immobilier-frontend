@@ -53,6 +53,9 @@ const routes: Routes = [
   {
     path: 'model', loadChildren: () => import('./model/model.module').then(m => m.ModelModule)
   },
+  {
+    path: 'gestion-expertise', loadChildren: () => import('./gestion-expertise/gestion-expertise.module').then(m => m.GestionExpertiseModule)
+  },
 ];
 
 @NgModule({

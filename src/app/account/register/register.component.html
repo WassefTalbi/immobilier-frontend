@@ -16,7 +16,7 @@
                               <div class="effect-circle-1 position-relative mx-auto rounded-circle d-flex align-items-center justify-content-center">
                                 <div class="effect-circle-2 position-relative mx-auto rounded-circle d-flex align-items-center justify-content-center">
                                   <div class="effect-circle-3 mx-auto rounded-circle position-relative text-white fs-4xl d-flex align-items-center justify-content-center">
-                                    Welcome to <span class="text-primary ms-1">Esprit Real-estate</span>
+                                   <span class="text-primary ms-1">Gestion Expertise</span>
                                   </div>
                                 </div>
                               </div>
@@ -145,6 +145,18 @@
                                   </div>
                                   <div class="invalid-feedback">
                                     Please enter your mobile number
+                                  </div>
+                                </div>
+                                <div class="mb-3">
+                                  <label for="role" class="form-label">Role <span class="text-danger">*</span></label>
+                                  <select class="form-select" id="role" formControlName="role" required [ngClass]="{ 'is-invalid': submitted && f['role'].errors }">
+                                    <option value="" disabled selected>Select your role</option>
+                                    <option value="TECHNICIEN">Technicien</option>
+                                    <option value="REDACTEUR">Redacteur</option>
+                                    <option value="VERIFICATEUR">Verificateur</option>
+                                  </select>
+                                  <div *ngIf="roleError" class="alert alert-danger mt-1" role="alert">
+                                    {{ roleError }}
                                   </div>
                                 </div>
                                 <div class="mb-3">

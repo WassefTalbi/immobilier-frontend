@@ -49,9 +49,11 @@ import { CustomerEffects } from './store/Customer/customer.effects';
 import { studentsEffects } from './store/students/student.effcts';
 import { CourcesEffects } from './store/Learning-cources/cources.effect';
 import {AdminGuard} from "./core/guards/admin.guard";
-import {userGuard} from "./core/guards/user.guard";
+import {VerificateurGuard} from "./core/guards/verificateur.guard";
 import {LayoutUserModule} from "./layout-user/layout-user.module";
 import {authInterceptorProviders} from "./core/helpers/auth.interceptor";
+import { RedacteurGuard } from './core/guards/redacteur.guard';
+import { TechnicieneGuard } from './core/guards/technicien.guard';
 
 export function createTranslateLoader(http: HttpClient): any {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -117,7 +119,7 @@ if (environment.defaultauth === 'firebase') {
     AngularFireAuthModule
   ],
   providers: [
-    AdminGuard,userGuard,authInterceptorProviders,
+    AdminGuard,VerificateurGuard,RedacteurGuard,TechnicieneGuard,authInterceptorProviders,
 /*    {
       provide: 'SocialAuthServiceConfig',
       useFactory: provideConfig

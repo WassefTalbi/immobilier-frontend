@@ -91,25 +91,6 @@ export class AuthenticationService {
   }
 
 
-  /* login(email: string, password: string) {
-       this.store.dispatch(login({ email, password }));
-
-       return this.http.post(AUTH_API + 'login', {
-           email,
-           password
-       }, httpOptions).pipe(
-           map((response: any) => {
-               const user = response;
-               this.store.dispatch(loginSuccess({ user }));
-               return user;
-           }),
-           catchError((error: any) => {
-               const errorMessage = 'Login failed'; // Customize the error message as needed
-               this.store.dispatch(loginFailure({ error: errorMessage }));
-               return throwError(errorMessage);
-           })
-       );
-   }*/
   login(username: string, password: string): Observable<any> {
     return this.http.post<any>(AUTH_API+`login`, { username, password }).pipe(
       tap(response => {
@@ -126,22 +107,7 @@ export class AuthenticationService {
     );
   }
 
- /* login(email: string, password: string) {
-    return this.http.post(GlobalComponent.AUTH_API + 'login', { email, password }, httpOptions).pipe(
-      map((response: any) => {
-        const token = response.token.acces; // Assuming your token is returned as 'token' property in the response
-        localStorage.setItem('token', token); // Save token to local storage
-        const user = response.user; // Assuming your user information is returned as 'user' property in the response
-        localStorage.setItem('currentUser', JSON.stringify(user)); // Save user to local storage
-        this.currentUserSubject.next(user); // Emit the current user
-        return response;
-      }),
-      catchError((error: any) => {
-        const errorMessage = 'Login failed'; // Customize the error message as needed
-        return throwError(errorMessage);
-      })
-    );
-  }*/
+
 
   logout(): Observable<void> {
         this.store.dispatch(logout());
@@ -178,13 +144,17 @@ export class AuthenticationService {
     const currentUser = this.currentUser();
     return currentUser && currentUser['scope'] === 'ADMIN';
   }
-  isUser(): boolean {
+  isTechnicien(): boolean {
     const currentUser = this.currentUser();
-    return currentUser && currentUser['scope'] === 'USER';
+    return currentUser && currentUser['scope'] === 'TECHNICIEN';
   }
-  isAgence(): boolean {
+  isVerificateur(): boolean {
     const currentUser = this.currentUser();
-    return currentUser && currentUser['scope'] === 'AGENCE';
+    return currentUser && currentUser['scope'] === 'VERIFICATEUR';
+  }
+  isRedacteur(): boolean {
+    const currentUser = this.currentUser();
+    return currentUser && currentUser['scope'] === 'REDACTEUR';
   }
 
   /* public currentUser(): any {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpEvent, HttpRequest} from '@angular/common/http';
+import {HttpClient, HttpEvent, HttpParams, HttpRequest} from '@angular/common/http';
 import { User } from 'src/app/store/Authentication/auth.models';
 import {GlobalComponent} from "../../global-component";
 import {AuthenticationService} from "./auth.service";
@@ -43,8 +43,15 @@ export class UserProfileService {
   getAllUsers(): Observable<User> {
     return this.http.get(API_URL+USER+`all`);
   }
+  deleteUserById(id: string): Observable<void> {
+    return this.http.delete<void>(API_URL+`api/user/${id}`);
+  }
 
-
+  toggleUserBlockStatus(userId: string, isBlocked: boolean): Observable<any> {
+    return this.http.put(API_URL+`user/${userId}/block`, null, {
+      params: new HttpParams().set('isBlocked', isBlocked.toString())
+    });
+  }
   blockUser(id: number): Observable<User> {
     console.log(id);
     return this.http.put<User>(API_URL+USER+`block/${id}`, {}).pipe(
